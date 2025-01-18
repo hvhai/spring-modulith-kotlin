@@ -3,13 +3,24 @@ package com.codehunter.spring_modulith_kotlin
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
+import org.testcontainers.junit.jupiter.Testcontainers
 
-@Import(TestcontainersConfiguration::class)
-@SpringBootTest
-class SpringModulithKotlinApplicationTests {
+@Testcontainers
+@SpringBootTest(
+    classes = arrayOf(SpringModulithKotlinApplication::class),
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
+@ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
+@ActiveProfiles("integration")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@Import(TestSecurityConfiguration::class)
+class SpringModulithKotlinApplicationTests : ContainerBaseTest() {
 
-	@Test
-	fun contextLoads() {
-	}
+    @Test
+    fun contextLoads() {
+    }
 
 }

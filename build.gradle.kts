@@ -22,21 +22,47 @@ repositories {
 extra["springModulithVersion"] = "1.3.1"
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	// web
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+	// security
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
+	// modulith
 	implementation("org.springframework.modulith:spring-modulith-starter-core")
 	implementation("org.springframework.modulith:spring-modulith-starter-jpa")
+
+	// db
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("com.mysql:mysql-connector-j")
 	runtimeOnly("com.h2database:h2")
-	runtimeOnly("com.mysql:mysql-connector-j")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+	// monitoring
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+	// swagger
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
+
+	// testing
+	testImplementation("org.springframework.boot:spring-boot-starter-test") {
+		exclude(module="mockito-core")
+	}
+	testImplementation("com.ninja-squad:springmockk:4.0.2")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("org.springframework.modulith:spring-modulith-starter-test")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	testImplementation("org.springframework.security:spring-security-test")
+
+	testImplementation("org.wiremock:wiremock-standalone:3.10.0")
+
+	testImplementation("org.springframework.modulith:spring-modulith-starter-test")
 }
 
 dependencyManagement {
