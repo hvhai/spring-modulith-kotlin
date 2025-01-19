@@ -1,9 +1,13 @@
 package com.codehunter.spring_modulith_kotlin.todo
 
-import com.codehunter.spring_modulith_kotlin.*
+import com.codehunter.spring_modulith_kotlin.ContainerBaseTest
+import com.codehunter.spring_modulith_kotlin.SpringModulithKotlinApplication
+import com.codehunter.spring_modulith_kotlin.WiremockInitializer
+import com.codehunter.spring_modulith_kotlin.share.ResponseDTO
 import com.codehunter.spring_modulith_kotlin.todo.internal.Todo
 import com.codehunter.spring_modulith_kotlin.todo.internal.TodoEntity
 import com.codehunter.spring_modulith_kotlin.todo.internal.TodoRepository
+import com.codehunter.spring_modulith_kotlin.typeReference
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse

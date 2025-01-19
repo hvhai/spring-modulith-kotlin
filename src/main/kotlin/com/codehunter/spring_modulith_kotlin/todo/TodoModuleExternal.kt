@@ -1,6 +1,6 @@
 package com.codehunter.spring_modulith_kotlin.todo
 
-import com.codehunter.spring_modulith_kotlin.ResponseDTO
+import com.codehunter.spring_modulith_kotlin.share.ResponseDTO
 import com.codehunter.spring_modulith_kotlin.todo.internal.Todo
 import com.codehunter.spring_modulith_kotlin.todo.internal.TodoEntity
 import com.codehunter.spring_modulith_kotlin.todo.internal.TodoManager

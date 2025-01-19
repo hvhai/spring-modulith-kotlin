@@ -1,6 +1,6 @@
 package com.codehunter.spring_modulith_kotlin.todo.internal
 
-import com.codehunter.spring_modulith_kotlin.IdNotFoundException
+import com.codehunter.spring_modulith_kotlin.share.IdNotFoundException
 import com.codehunter.spring_modulith_kotlin.todo.toDomain
 import com.codehunter.spring_modulith_kotlin.todo.toEntity
 import jakarta.persistence.*

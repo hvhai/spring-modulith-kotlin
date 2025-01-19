@@ -1,5 +1,8 @@
 package com.codehunter.spring_modulith_kotlin
 
+import com.codehunter.spring_modulith_kotlin.share.ErrorCodes
+import com.codehunter.spring_modulith_kotlin.share.IdNotFoundException
+import com.codehunter.spring_modulith_kotlin.share.ResponseFormatter
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.annotation.PostConstruct
 import jakarta.servlet.http.HttpServletRequest
@@ -134,30 +137,6 @@ class WebConfig : WebMvcConfigurer {
 }
 
 
-data class ResponseDTO<T>(
-    val data: T?,
-    @JsonProperty("errors")
-    val errorInfo: ErrorInfo?
-)
-
-data class IdNotFoundException(override val message: String) : Exception(message)
-data class ErrorInfo(val url: String, val error: String)
-
-
-@ControllerAdvice
-class ExceptionHandler() {
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(IdNotFoundException::class)
-    @ResponseBody
-    fun handleNotFound(request: HttpServletRequest, exception: Exception) =
-        ErrorInfo(request.requestURL.toString(), exception.message ?: "Not found")
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException::class)
-    @ResponseBody
-    fun handleIllegalArgumentException(request: HttpServletRequest, exception: Exception) =
-        ErrorInfo(request.requestURL.toString(), exception.message ?: "Invalid request argument")
-}
 
 fun main(args: Array<String>) {
     runApplication<SpringModulithKotlinApplication>(*args)
