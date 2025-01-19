@@ -16,7 +16,7 @@ class JpaPayment(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
     val orderId: String,
-    val totalAmount: BigDecimal,
+    val totalAmount: BigDecimal?,
     val purchaseAt: Instant? = null
 
 ) : AbstractAggregateRoot<JpaPayment>() {

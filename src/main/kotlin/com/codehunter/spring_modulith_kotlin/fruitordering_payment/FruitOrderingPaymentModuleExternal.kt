@@ -39,8 +39,8 @@ class PaymentController(private val paymentService: PaymentService) {
 
     @PostMapping("/payments/{id}/purchase")
     fun purchaseAPayment(@PathVariable id: String): ResponseEntity<ResponseDTO<PaymentDTO>> {
-        log.info("POST purchaseAPayment")
         val user: UserDTO = AuthenticationUtil.user
+        log.info("POST user: {} purchaseAPayment", user.id)
         val payment = paymentService.purchasePayment(id)
         return ResponseFormatter.handleSingle(payment, HttpHeaders(), HttpStatus.CREATED)
     }

@@ -32,5 +32,5 @@ class ApplicationError(
     @JsonProperty(value = "detail") val detail: String
 )
 
-data class UserDTO(val id: String, val username: String)
+data class UserDTO(val id: String, val username: String?)
 
