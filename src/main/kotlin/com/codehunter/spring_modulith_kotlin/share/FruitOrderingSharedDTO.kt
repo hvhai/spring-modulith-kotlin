@@ -6,7 +6,7 @@ import java.time.Instant
 
 data class ProductDTO(val id: String, val name: String, val price: BigDecimal)
 
-data class PaymentDTO(val id: String, val orderId: String, val totalAmount: BigDecimal, val purchaseAt: Instant)
+data class PaymentDTO(val id: String, val orderId: String, val totalAmount: BigDecimal, val purchaseAt: Instant?)
 
 data class OrderDTO(
     @JsonInclude(JsonInclude.Include.NON_NULL) val id: String,
