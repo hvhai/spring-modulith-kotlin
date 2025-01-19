@@ -1,11 +1,13 @@
 package com.codehunter.spring_modulith_kotlin
 
-import com.codehunter.spring_modulith_kotlin.share.ErrorCodes
-import com.codehunter.spring_modulith_kotlin.share.IdNotFoundException
-import com.codehunter.spring_modulith_kotlin.share.ResponseFormatter
-import com.fasterxml.jackson.annotation.JsonProperty
+import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
 import jakarta.annotation.PostConstruct
-import jakarta.servlet.http.HttpServletRequest
+import org.apache.commons.lang3.StringUtils
+import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -14,17 +16,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpStatus
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
@@ -136,6 +133,44 @@ class WebConfig : WebMvcConfigurer {
     }
 }
 
+@Configuration
+class OpenApiConfig {
+    @Bean
+    fun customOpenAPI(): OpenAPI {
+        val securitySchemeName = "bearerAuth"
+        val apiTitle = String.format("%s API", StringUtils.capitalize("Modulith Kotlin"))
+        return OpenAPI()
+            .addSecurityItem(SecurityRequirement().addList(securitySchemeName)) // this line make all method must be authenticated
+            .components(
+                Components()
+                    .addSecuritySchemes(
+                        securitySchemeName,
+                        SecurityScheme()
+                            .name(securitySchemeName)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT")
+                    )
+            )
+            .info(Info().title(apiTitle).version("v1"))
+    }
+
+    @Bean
+    fun methodPlaygroundApi(): GroupedOpenApi {
+        return GroupedOpenApi.builder()
+            .group("todo-kotlin")
+            .pathsToMatch("/api/todos/**")
+            .build()
+    }
+
+    @Bean
+    fun fruitOrderingApi(): GroupedOpenApi {
+        return GroupedOpenApi.builder()
+            .group("fruit-ordering")
+            .pathsToMatch("/api/fruit-ordering/**")
+            .build()
+    }
+}
 
 
 fun main(args: Array<String>) {

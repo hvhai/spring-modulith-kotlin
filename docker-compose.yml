@@ -1,0 +1,25 @@
+services:
+  my-sql:
+    image: mysql:8.1.0
+    platform: linux/amd64
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=spring-modulith-kotlin
+    #    volumes:
+    #      - ./data.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3316:3306"
+    command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+    networks:
+      - spring-modulith-kotlin-network
+
+  zipkin-all-in-one:
+    image: openzipkin/zipkin
+    platform: linux/amd64
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    ports:
+      - 9411:9411
+    networks:
+      - spring-modulith-kotlin-network
+networks:
+  spring-modulith-kotlin-network:

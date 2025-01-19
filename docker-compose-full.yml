@@ -1,0 +1,40 @@
+services:
+  backend:
+    image: modulith-project:latest
+    platform: linux/amd64
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8088
+    environment:
+      - SERVER_PORT=8088
+      - APP_H2_PASS=1
+      - APP_METHOD_API_TOKEN=${APP_METHOD_API_TOKEN}
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - DOMAIN=${DOMAIN}
+      - MANAGEMENT_TRACING_SAMPLING_PROBABILITY=1.0
+      - MANAGEMENT_TRACING_ENABLED=true
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-all-in-one:9411/api/v2/spans
+    deploy:
+      resources:
+        limits:
+          cpus: 2.0
+          memory: 512M
+        reservations:
+          cpus: 0.5
+          memory: 256M
+    depends_on:
+      - zipkin-all-in-one
+    networks:
+      - spring-modulith-kotlin-network
+  zipkin-all-in-one:
+    image: openzipkin/zipkin
+    platform: linux/amd64
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    ports:
+      - 9411:9411
+    networks:
+      - spring-modulith-kotlin-network
+networks:
+  spring-modulith-kotlin-network:
