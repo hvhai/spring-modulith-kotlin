@@ -7,6 +7,7 @@ import org.springframework.modulith.docs.Documenter
 
 class SpringModulithKotlinModuleTest {
     private val modules = ApplicationModules.of(SpringModulithKotlinApplication::class.java)
+
     @Test
     fun `should be able to run test`() {
         modules.verify()
