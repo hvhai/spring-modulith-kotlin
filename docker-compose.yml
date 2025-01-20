@@ -1,6 +1,6 @@
 services:
   my-sql:
-    image: mysql:8.1.0
+    image: mysql:9.1.0
     platform: linux/amd64
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
