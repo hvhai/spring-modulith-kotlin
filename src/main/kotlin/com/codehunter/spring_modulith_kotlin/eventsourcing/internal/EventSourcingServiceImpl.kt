@@ -6,7 +6,8 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 
 @Component
-class EventSourcingServiceImpl(private val applicationEventPublisher: ApplicationEventPublisher) : EventSourcingService {
+class EventSourcingServiceImpl(private val applicationEventPublisher: ApplicationEventPublisher) :
+    EventSourcingService {
     override fun addOrderEvent(event: OrderEvent) {
         val span: Span = Span.current()
         span.setAttribute("event.publish", event.orderEventType.toString())
