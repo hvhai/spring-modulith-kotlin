@@ -23,6 +23,15 @@ class TestcontainersConfiguration {
 
 }
 
+@TestConfiguration
+class TestInfra {
+    @Bean
+    @ServiceConnection
+    fun mySQLContainer(): MySQLContainer<*> {
+        return MySQLContainer(DockerImageName.parse("mysql:8.0.33")).withReuse(true)
+    }
+}
+
 @TestConfiguration(proxyBeanMethods = false)
 class TestSecurityConfiguration {
     @Bean

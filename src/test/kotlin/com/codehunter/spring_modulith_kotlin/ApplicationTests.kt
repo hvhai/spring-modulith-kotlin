@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @Import(TestSecurityConfiguration::class)
-class SpringModulithKotlinApplicationTests : ContainerBaseTest() {
+class ApplicationTests : ContainerBaseTest() {
 
     @Test
     fun contextLoads() {

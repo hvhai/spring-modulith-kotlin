@@ -1,6 +1,7 @@
 package com.codehunter.spring_modulith_kotlin.fruitordering_warehouse
 
 import com.codehunter.spring_modulith_kotlin.ContainerBaseMoudulithTest
+import com.codehunter.spring_modulith_kotlin.TestInfra
 import com.codehunter.spring_modulith_kotlin.TestSecurityConfiguration
 import com.codehunter.spring_modulith_kotlin.WiremockInitializer
 import com.codehunter.spring_modulith_kotlin.eventsourcing.EventSourcingService
@@ -13,30 +14,14 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.modulith.test.ApplicationModuleTest
 import org.springframework.modulith.test.Scenario
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.utility.DockerImageName
 import kotlin.test.assertEquals
 
-
-@TestConfiguration
-class TestInfra {
-    @Bean
-    @ServiceConnection
-    fun mySQLContainer(): MySQLContainer<*> {
-        return MySQLContainer(DockerImageName.parse("mysql:8.0.33")).withReuse(true)
-    }
-
-
-}
 
 @ApplicationModuleTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT

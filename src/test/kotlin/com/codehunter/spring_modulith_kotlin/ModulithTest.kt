@@ -5,7 +5,7 @@ import org.springframework.modulith.core.ApplicationModules
 import org.springframework.modulith.docs.Documenter
 
 
-class SpringModulithKotlinModuleTest {
+class ModulithTest {
     private val modules = ApplicationModules.of(SpringModulithKotlinApplication::class.java)
 
     @Test
