@@ -5,6 +5,7 @@ import com.codehunter.spring_modulith_kotlin.TestInfra
 import com.codehunter.spring_modulith_kotlin.TestSecurityConfiguration
 import com.codehunter.spring_modulith_kotlin.WiremockInitializer
 import com.codehunter.spring_modulith_kotlin.eventsourcing.EventSourcingService
+import com.codehunter.spring_modulith_kotlin.eventsourcing.WarehouseEvent
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.JpaWarehouseProduct
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.WarehouseProductRepository
 import com.codehunter.spring_modulith_kotlin.share.OrderDTO
@@ -12,6 +13,7 @@ import com.codehunter.spring_modulith_kotlin.share.OrderStatus
 import com.codehunter.spring_modulith_kotlin.share.ProductDTO
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -39,11 +41,6 @@ class WarehouseStandaloneIntegrationTest : ContainerBaseMoudulithTest() {
     @MockitoBean
     lateinit var eventSourcingService: EventSourcingService
 
-//    @BeforeEach
-//    fun init() {
-//        every { eventSourcingService.addWarehouseEvent(any()) }
-//            .answers { println("addWarehouseEvent") }
-//    }
 
     @Test
     fun reserveProductForOrder(scenario: Scenario?) {
@@ -54,14 +51,7 @@ class WarehouseStandaloneIntegrationTest : ContainerBaseMoudulithTest() {
         val warehouseProductDTO1: JpaWarehouseProduct = allProduct.find { it.name == "Apple" }!!
         assertEquals(10, warehouseProductDTO1.quantity)
 
-        // Tech debt: Mocking eventSourcingService with doNothing
-//        val warehouseEvent = slot<WarehouseEvent>()
-//        every { eventSourcingService.addWarehouseEvent(capture(warehouseEvent)) }
-//            .answers { println("addWarehouseEvent") }
-//        Mockito.doNothing().`when`(eventSourcingService).addWarehouseEvent(
-//            nullable(WarehouseEvent::class.java)
-//        )
-//        Mockito.doNothing().`when`(eventSourcingService).addWarehouseEvent(Mockito.any(WarehouseEvent::class.java))
+        doNothing().`when`(eventSourcingService).addWarehouseEvent(any())
 
         // when
         val productDTO: ProductDTO = ProductDTO(
@@ -83,9 +73,13 @@ class WarehouseStandaloneIntegrationTest : ContainerBaseMoudulithTest() {
         val updatedProduct: JpaWarehouseProduct =
             warehouseProductRepository.findById(warehouseProductDTO1.id!!).get()
         assertEquals(9, updatedProduct.quantity)
-//        verify(eventSourcingService, times(1)).addWarehouseEvent(any())
-//        verify(exactly = 1) { eventSourcingService.addWarehouseEvent(any()) }
-//        assertEquals(orderDTO.id, warehouseEvent.captured.orderId)
-//        assertEquals(WarehouseEvent.WarehouseEventType.RESERVE_COMPLETED, warehouseEvent.captured.warehouseEventType)
+        verify(eventSourcingService, times(4)).addWarehouseEvent(any())
+
+        argumentCaptor<WarehouseEvent>().apply {
+            verify(eventSourcingService, times(4)).addWarehouseEvent(capture())
+            assertEquals(4, allValues.size)
+            assertEquals(orderDTO.id, lastValue.orderId)
+            assertEquals(WarehouseEvent.WarehouseEventType.RESERVE_COMPLETED, lastValue.warehouseEventType)
+        }
     }
 }
