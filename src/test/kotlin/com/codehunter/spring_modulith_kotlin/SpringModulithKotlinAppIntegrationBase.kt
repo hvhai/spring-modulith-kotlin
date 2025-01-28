@@ -138,3 +138,39 @@ abstract class ContainerBaseTest {
         }
     }
 }
+
+abstract class ContainerBaseMoudulithTest {
+    companion object {
+        // init mock authentication
+        val rsaKey = RSAKeyGenerator(2048)
+            .keyUse(KeyUse.SIGNATURE)
+            .expirationTime(Date(Date().time + 60 * 1000))
+            .algorithm(Algorithm("RS256"))
+            .keyID("1234")
+            .generate()
+        val token = getSignedJwt()
+
+        private fun getSignedJwt(): String {
+            val signer = RSASSASigner(rsaKey)
+            val claimsSet = JWTClaimsSet.Builder()
+                .expirationTime(Date(Date().time + 60 * 1000))
+                .claim("http://coundowntimer.com/roles", listOf("user"))
+                .issuer("https://dev-codehunter.auth0.com/")
+                .subject("auth0|604a3194414b5e007020aacd")
+                .audience("https://dev-codehunter.auth0.com/api/v2/")
+                .claim(
+                    "scope",
+                    "read:current_user update:current_user_metadata delete:current_user_metadata create:current_user_metadata create:current_user_device_credentials delete:current_user_device_credentials update:current_user_identities"
+                )
+                .claim("gty", "password")
+                .claim("azp", "sNYVOrixNb0ZyE0WZnxvurbuOYTmX9SK")
+                .build()
+            val signedJWT = SignedJWT(
+                JWSHeader.Builder(JWSAlgorithm.RS256)
+                    .keyID(rsaKey!!.keyID).build(), claimsSet
+            )
+            signedJWT.sign(signer)
+            return signedJWT.serialize()
+        }
+    }
+}

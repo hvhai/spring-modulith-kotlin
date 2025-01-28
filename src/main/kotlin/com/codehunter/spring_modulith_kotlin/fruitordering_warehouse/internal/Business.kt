@@ -63,7 +63,17 @@ class WarehouseServiceImpl(
         val existentProductList = productRepository.findAllById(productMap.keys)
 
         try {
-            existentProductList.forEach(JpaWarehouseProduct::reserveForOrder)
+            val updatedList = existentProductList.map(JpaWarehouseProduct::reserveForOrder)
+            productRepository.saveAll(updatedList)
+            log.info("[WarehouseProductPackageCompletedEvent]Products are ready for OrderId={}", orderId)
+            //        applicationEventPublisher.publishEvent(new WarehouseProductPackageCompletedEvent(orderId));
+            eventSourcingService.addWarehouseEvent(
+                WarehouseEvent(
+                    listOf(),
+                    request.id,
+                    WarehouseEvent.WarehouseEventType.RESERVE_COMPLETED
+                )
+            )
         } catch (exception: ProductOutOfStockException) {
             log.info("[WarehouseProductOutOfStockEvent]Products are out of stock for OrderId={}", orderId)
             //            applicationEventPublisher.publishEvent(new WarehouseProductOutOfStockEvent(request.orderId(), warehouseProductMapper.toProductDto(exception.getProduct())));
@@ -76,16 +86,6 @@ class WarehouseServiceImpl(
             )
             return
         }
-        productRepository.saveAll(existentProductList)
-        log.info("[WarehouseProductPackageCompletedEvent]Products are ready for OrderId={}", orderId)
-        //        applicationEventPublisher.publishEvent(new WarehouseProductPackageCompletedEvent(orderId));
-        eventSourcingService.addWarehouseEvent(
-            WarehouseEvent(
-                listOf(),
-                request.id,
-                WarehouseEvent.WarehouseEventType.RESERVE_COMPLETED
-            )
-        )
     }
 
     override fun allProduct(): List<WarehouseProductDTO> {
