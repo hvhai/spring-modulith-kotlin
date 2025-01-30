@@ -25,12 +25,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 import kotlin.test.assertEquals
 
 
-@ApplicationModuleTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+@ApplicationModuleTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
-@ActiveProfiles("integration")
 @Import(value = arrayOf(TestSecurityConfiguration::class, TestInfra::class))
+@ActiveProfiles("integration")
 class WarehouseStandaloneIntegrationTest : ContainerBaseMoudulithTest() {
     @Autowired
     lateinit var warehouseService: WarehouseService
@@ -43,7 +41,7 @@ class WarehouseStandaloneIntegrationTest : ContainerBaseMoudulithTest() {
 
 
     @Test
-    fun reserveProductForOrder(scenario: Scenario?) {
+    fun `when reserve a product for order then product quantity  in stock decrease by 1`(scenario: Scenario?) {
         // given
         // Stock: Apple: 10
         val allProduct: List<JpaWarehouseProduct> = warehouseProductRepository.findAll()
@@ -54,12 +52,12 @@ class WarehouseStandaloneIntegrationTest : ContainerBaseMoudulithTest() {
         doNothing().`when`(eventSourcingService).addWarehouseEvent(any())
 
         // when
-        val productDTO: ProductDTO = ProductDTO(
+        val productDTO = ProductDTO(
             warehouseProductDTO1.id!!,
             warehouseProductDTO1.name,
             warehouseProductDTO1.price
         )
-        val orderDTO: OrderDTO = OrderDTO(
+        val orderDTO = OrderDTO(
             "1",
             OrderStatus.IN_PRODUCT_PREPARE,
             null,
