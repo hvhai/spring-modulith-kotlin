@@ -62,7 +62,7 @@ dependencies {
 
 	testImplementation("org.springframework.security:spring-security-test")
 
-	testImplementation("org.wiremock:wiremock-standalone:3.10.0")
+	testImplementation("org.wiremock:wiremock-standalone:3.11.0")
 
 	testImplementation("org.springframework.modulith:spring-modulith-starter-test")
 }
