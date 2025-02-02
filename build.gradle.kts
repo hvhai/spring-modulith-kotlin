@@ -40,6 +40,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("com.mysql:mysql-connector-j")
 	runtimeOnly("com.h2database:h2")
+	implementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.10.0")
 
 	// monitoring
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -60,6 +61,7 @@ dependencies {
 	testImplementation("org.testcontainers:mysql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+	testImplementation("com.c4-soft.springaddons:spring-addons-oauth2-test:7.1.10")
 	testImplementation("org.springframework.security:spring-security-test")
 
 	testImplementation("org.wiremock:wiremock-standalone:3.10.0")

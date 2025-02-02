@@ -1,6 +1,6 @@
 package com.codehunter.spring_modulith_kotlin.todo
 
-import com.codehunter.spring_modulith_kotlin.ContainerBaseTest
+import com.codehunter.spring_modulith_kotlin.IntegrationBaseTest
 import com.codehunter.spring_modulith_kotlin.SpringModulithKotlinApplication
 import com.codehunter.spring_modulith_kotlin.WiremockInitializer
 import com.codehunter.spring_modulith_kotlin.share.ResponseDTO
@@ -38,7 +38,7 @@ import kotlin.test.assertNull
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
 @ActiveProfiles("integration")
-class TodoIntegrationTest : ContainerBaseTest() {
+class TodoIntegrationTest : IntegrationBaseTest() {
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 

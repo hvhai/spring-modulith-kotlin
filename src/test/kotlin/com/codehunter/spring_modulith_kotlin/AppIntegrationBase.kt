@@ -88,7 +88,7 @@ class WiremockInitializer : ApplicationContextInitializer<ConfigurableApplicatio
     }
 }
 
-abstract class ContainerBaseTest {
+abstract class IntegrationBaseTest {
     companion object {
         @Container
         @JvmStatic
@@ -139,7 +139,7 @@ abstract class ContainerBaseTest {
     }
 }
 
-abstract class ContainerBaseMoudulithTest {
+abstract class MoudulithBaseTest {
     companion object {
         // init mock authentication
         val rsaKey = RSAKeyGenerator(2048)
@@ -164,6 +164,7 @@ abstract class ContainerBaseMoudulithTest {
                 )
                 .claim("gty", "password")
                 .claim("azp", "sNYVOrixNb0ZyE0WZnxvurbuOYTmX9SK")
+                .subject("user")
                 .build()
             val signedJWT = SignedJWT(
                 JWSHeader.Builder(JWSAlgorithm.RS256)

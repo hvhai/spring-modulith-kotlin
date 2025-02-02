@@ -1,7 +1,7 @@
 package com.codehunter.spring_modulith_kotlin.fruitordering_warehouse
 
-import com.codehunter.spring_modulith_kotlin.ContainerBaseMoudulithTest
-import com.codehunter.spring_modulith_kotlin.TestInfra
+import com.codehunter.spring_modulith_kotlin.MoudulithBaseTest
+import com.codehunter.spring_modulith_kotlin.TestContainerConfig
 import com.codehunter.spring_modulith_kotlin.TestSecurityConfiguration
 import com.codehunter.spring_modulith_kotlin.WiremockInitializer
 import com.codehunter.spring_modulith_kotlin.eventsourcing.EventSourcingService
@@ -27,9 +27,9 @@ import kotlin.test.assertEquals
 
 @ApplicationModuleTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
-@Import(value = arrayOf(TestSecurityConfiguration::class, TestInfra::class))
+@Import(value = arrayOf(TestSecurityConfiguration::class, TestContainerConfig::class))
 @ActiveProfiles("integration")
-class WarehouseStandaloneModuleTest : ContainerBaseMoudulithTest() {
+class WarehouseStandaloneModuleTest : MoudulithBaseTest() {
     @Autowired
     lateinit var warehouseService: WarehouseService
 

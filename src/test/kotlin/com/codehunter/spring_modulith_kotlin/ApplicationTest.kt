@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ActiveProfiles("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @Import(TestSecurityConfiguration::class)
-class ApplicationTests : ContainerBaseTest() {
+class ApplicationTest : IntegrationBaseTest() {
 
     @Test
     fun contextLoads() {
