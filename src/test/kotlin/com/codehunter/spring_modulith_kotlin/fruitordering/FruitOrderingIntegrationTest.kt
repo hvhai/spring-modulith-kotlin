@@ -23,7 +23,6 @@ import org.springframework.modulith.test.Scenario
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
@@ -34,10 +33,8 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
 @Import(value = arrayOf(TestSecurityConfiguration::class, TestContainerConfig::class))
 @ActiveProfiles("integration")
-@Sql(scripts = ["classpath:datasource/schema-integration.sql"])
 @TestPropertySource(
     properties = [
-        "spring.main.lazy-initialization=true",
         "spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true"
     ]
 )

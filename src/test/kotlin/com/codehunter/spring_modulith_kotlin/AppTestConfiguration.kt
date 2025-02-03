@@ -44,7 +44,7 @@ class TestContainerConfig {
     @Bean
     @ServiceConnection
     fun mySQLContainer(): MySQLContainer<*> {
-        return MySQLContainer(DockerImageName.parse("mysql:8.0.33")).withReuse(true)
+        return MySQLContainer(DockerImageName.parse("mysql:8.0.33")).withReuse(false)
     }
 }
 

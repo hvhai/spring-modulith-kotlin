@@ -46,4 +46,6 @@ data class JpaWarehouseProduct(
 }
 
 @Repository
-interface WarehouseProductRepository : JpaRepository<JpaWarehouseProduct, String>
+interface WarehouseProductRepository : JpaRepository<JpaWarehouseProduct, String> {
+    fun findByName(name: String): JpaWarehouseProduct?
+}

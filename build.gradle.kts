@@ -41,6 +41,8 @@ dependencies {
 	implementation("com.mysql:mysql-connector-j")
 	runtimeOnly("com.h2database:h2")
 	implementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.10.0")
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-mysql")
 
 	// monitoring
 	implementation("org.springframework.boot:spring-boot-starter-actuator")

@@ -92,7 +92,7 @@ abstract class IntegrationBaseTest {
     companion object {
         @Container
         @JvmStatic
-        val mySQLContainer = MySQLContainer(DockerImageName.parse("mysql:8.0.33")).withReuse(true)
+        val mySQLContainer = MySQLContainer(DockerImageName.parse("mysql:8.0.33")).withReuse(false)
 
         @DynamicPropertySource
         @JvmStatic

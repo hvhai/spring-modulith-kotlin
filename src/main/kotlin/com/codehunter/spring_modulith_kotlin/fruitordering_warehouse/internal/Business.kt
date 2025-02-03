@@ -29,6 +29,11 @@ class InitData(
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         log.info("onApplicationEvent: App STARTED")
+
+        if (productRepository.findByName("Apple") != null) {
+            log.info("Products already initialized")
+            return
+        }
         val product1 = JpaWarehouseProduct(null, "Apple", 10, BigDecimal(10_000))
         val product2 = JpaWarehouseProduct(null, "Orange", 0, BigDecimal(5_000))
         val product3 = JpaWarehouseProduct(null, "Lemon", 5, BigDecimal(2_000))
