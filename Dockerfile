@@ -1,6 +1,6 @@
 # Use the official maven/Java 8 image to create a build artifact.
 # https://hub.docker.com/_/maven
-FROM gradle:8.5-jdk21-alpine AS build
+FROM gradle:8.11-jdk21-alpine AS build
 #FROM openjdk:17-jdk-slim as build
 WORKDIR /code
 #
@@ -21,7 +21,7 @@ FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 # Copy the jar to the production image from the builder stage.
-COPY --from=build /code/build/libs/modulith-project-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /code/build/libs/spring-modulith-kotlin-0.0.1-SNAPSHOT.jar app.jar
 
 # ENV PORT=8080
 ARG APP_METHOD_API_TOKEN
