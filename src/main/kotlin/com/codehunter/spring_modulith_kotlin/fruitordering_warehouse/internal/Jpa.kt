@@ -24,6 +24,7 @@ data class JpaWarehouseProduct(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String?,
+    @Column(unique = true)
     val name: String,
     val quantity: Int,
     val price: BigDecimal

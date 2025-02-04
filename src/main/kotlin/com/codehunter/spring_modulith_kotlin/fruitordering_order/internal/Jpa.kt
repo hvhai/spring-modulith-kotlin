@@ -14,6 +14,7 @@ import java.time.Instant
 class JpaOrderProduct(
     @Id
     var id: String,
+    @Column(unique = true)
     var name: String,
     var price: BigDecimal,
 
