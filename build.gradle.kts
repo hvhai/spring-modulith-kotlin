@@ -58,6 +58,13 @@ dependencies {
 	// swagger
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
 
+	// markdown
+	implementation("org.commonmark:commonmark:0.24.0")
+
+	// http client
+	implementation("org.apache.httpcomponents.client5:httpclient5")
+
+
 	// testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
