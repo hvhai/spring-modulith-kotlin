@@ -6,6 +6,8 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import jakarta.annotation.PostConstruct
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.lang3.StringUtils
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,9 +23,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
+import org.springframework.security.core.Authentication
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.logout.LogoutHandler
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.io.IOException
 
 @SpringBootApplication
 class SpringModulithKotlinApplication {
@@ -58,6 +64,12 @@ class DirectlyConfiguredJwkSetUri {
     @Value("\${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
     lateinit var jwkSetUri: String
 
+    @Value("\${spring.security.oauth2.client.provider.spring-auth0-mvc.issuer-uri}")
+    lateinit var issuer: String
+
+    @Value("\${spring.security.oauth2.client.registration.spring-auth0-mvc.client-id}")
+    lateinit var clientId: String
+
     @Bean
     @Throws(java.lang.Exception::class)
     @Order(0)
@@ -73,6 +85,7 @@ class DirectlyConfiguredJwkSetUri {
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/v3/**",
+                        "/","/index.html",
                     )
                     .permitAll()
                     .anyRequest().authenticated()
@@ -100,6 +113,7 @@ class DirectlyConfiguredJwkSetUri {
             .authorizeHttpRequests({
                 it
                     .requestMatchers(
+                        "/","/index.html",
                         "/h2-console/**", "/actuator/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -115,7 +129,19 @@ class DirectlyConfiguredJwkSetUri {
             .oauth2ResourceServer { it.disable() }
             .csrf { it.disable() }
             .headers { it.frameOptions(HeadersConfigurer<HttpSecurity>.FrameOptionsConfig::disable) }
+            .logout { it.addLogoutHandler(logoutHandler()) }
         return http.build()
+    }
+
+    private fun logoutHandler(): LogoutHandler {
+        return LogoutHandler { _: HttpServletRequest, response: HttpServletResponse, _: Authentication ->
+            try {
+                val baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                response.sendRedirect(issuer + "v2/logout?client_id=" + clientId + "&returnTo=" + baseUrl)
+            } catch (e: IOException) {
+                throw RuntimeException(e)
+            }
+        }
     }
 }
 
