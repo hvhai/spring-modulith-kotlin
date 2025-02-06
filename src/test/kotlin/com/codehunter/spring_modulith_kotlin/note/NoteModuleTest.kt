@@ -27,4 +27,16 @@ class NoteModuleTest {
         // Then
         assert(content.isNotBlank())
     }
+
+    @Test
+    fun `should get tree from github`() {
+        // Given
+        val githubService = GithubService()
+
+        // When
+        val tree = githubService.getTree("hvhai", "public-vault", "0b388bccbe72932dc448448650e2e68fda87218b")
+
+        // Then
+        assert(tree.root.children.isNotEmpty())
+    }
 }

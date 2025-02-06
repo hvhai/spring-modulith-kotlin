@@ -8,7 +8,15 @@
         <div class="mt-5">
             <div class="container">
                 <div class="row">
-                    <div th:utext="${content}"></divt>
+                    <div th:utext="${content}"></div>
+                </div>
+                <div class="row">
+                    <ul th:fragment="fragment_node(noteTree)" th:unless="${#lists.isEmpty(noteTree.children)}" >
+                        <li th:each="child : ${noteTree.children}" th:inline="text">
+                            [[${child.fileName}]]
+                            <ul th:replace="~{this::fragment_node(${child})}"></ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

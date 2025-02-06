@@ -36,23 +36,78 @@ class GithubService {
             .toEntity<String>()
         return response.body ?: ""
     }
-    fun getTree(repo:String) {
+
+    fun getTree(user: String, repo: String, hash: String): NoteTree {
         val client = RestClient.builder()
             .requestFactory(HttpComponentsClientHttpRequestFactory())
             .baseUrl("https://api.github.com")
             .build()
         val response = client.get()
-            .uri("repos/$repo/git/trees/main")
+            .uri("repos/$user/$repo/git/trees/$hash?recursive=true")
             .header("Accept", "application/vnd.github.v3.raw")
             .retrieve()
-            .toEntity<String>()
+            .toEntity<GhTree>()
         println(response.body)
+        val ghTree = response.body ?: GhTree("", "", listOf(), false)
+        val noteTree = NoteTree(NoteTreeItem(mutableListOf(), repo, repo, null))
+
+        ghTree.tree.forEach {
+            var current = noteTree.root
+            val path = it.path.split("/")
+            for (item in path) {
+                val child = current.children.find { it.filename.split("/").last() == item }
+                if (child != null) {
+                    current = child
+                } else {
+                    val newChild = NoteTreeItem(mutableListOf(), item, it.path, current)
+                    current.children.add(newChild)
+                    current = newChild
+                }
+            }
+        }
+        // display all path of the tree noteTree.root.children
+        displayTree(noteTree, "")
+        return noteTree
     }
+
+    private fun displayTree(noteTree: NoteTree, indent: String = "") {
+        noteTree.root.children.forEach {
+            println("$indent${it.filename} [${it.path}]")
+            displayTree(
+                NoteTree(NoteTreeItem(it.children, it.filename, it.path, it.parent)), "$indent  "
+            )
+        }
+    }
+}
+
+class GhTree(val sha: String, val url: String, val tree: List<GhTreeItem>, val truncated: Boolean) {
+}
+
+class GhTreeItem(
+    val path: String,
+    val mode: String,
+    val type: String,
+    val sha: String,
+    val size: Int,
+    val url: String
+) {
+}
+
+class NoteTree(val root: NoteTreeItem) {
+
+}
+
+class NoteTreeItem(
+    val children: MutableList<NoteTreeItem> = mutableListOf<NoteTreeItem>(),
+    val filename: String,
+    val path: String,
+    val parent: NoteTreeItem?
+) {
 }
 
 @Controller
 @RequestMapping("/note")
-class NoteController{
+class NoteController {
 
     @GetMapping
     fun showNote(model: Model, @AuthenticationPrincipal principal: OidcUser?): String {
@@ -64,6 +119,9 @@ class NoteController{
         val markdownUtil = MarkdownUtil()
         val html = markdownUtil.renderHtml(content)
         model.addAttribute("content", html)
+
+        val noteTree = githubService.getTree("hvhai", "public-vault", "0b388bccbe72932dc448448650e2e68fda87218b")
+        model.addAttribute("noteTree", noteTree.root)
         return "note"
     }
 
