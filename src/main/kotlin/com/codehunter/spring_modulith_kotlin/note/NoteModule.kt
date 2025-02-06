@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.toEntity
 
@@ -110,17 +111,28 @@ class NoteTreeItem(
 class NoteController {
 
     @GetMapping
-    fun showNote(model: Model, @AuthenticationPrincipal principal: OidcUser?): String {
+    fun showNote(
+        model: Model,
+        @AuthenticationPrincipal principal: OidcUser?,
+        @RequestParam displayPath: String?
+    ): String {
         if (principal != null) {
             model.addAttribute("profile", principal.claims)
         }
+        val user = "hvhai"
+        val repo = "public-vault"
         val githubService = GithubService()
-        val content = githubService.getContent("repos/hvhai/public-vault/contents/Welcome.md")
-        val markdownUtil = MarkdownUtil()
-        val html = markdownUtil.renderHtml(content)
-        model.addAttribute("content", html)
+        if (displayPath != null) {
+            val content = githubService.getContent("repos/${user}/${repo}/contents/${displayPath}")
+            val markdownUtil = MarkdownUtil()
+            val html = markdownUtil.renderHtml(content)
+            model.addAttribute("content", html)
+        } else {
+            model.addAttribute("content", "")
+        }
 
-        val noteTree = githubService.getTree("hvhai", "public-vault", "0b388bccbe72932dc448448650e2e68fda87218b")
+        val hash = "0b388bccbe72932dc448448650e2e68fda87218b"
+        val noteTree = githubService.getTree(user, repo, hash)
         model.addAttribute("noteTree", noteTree.root)
         return "note"
     }
