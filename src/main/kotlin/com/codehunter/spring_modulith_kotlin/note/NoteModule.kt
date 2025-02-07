@@ -119,8 +119,10 @@ class NoteController {
         if (principal != null) {
             model.addAttribute("profile", principal.claims)
         }
-        val user = "hvhai"
-        val repo = "public-vault"
+//        val user = "hvhai"
+//        val repo = "public-vault"
+        val user = "Froussios"
+        val repo = "Intro-To-RxJava"
         val githubService = GithubService()
         if (displayPath != null) {
             val content = githubService.getContent("repos/${user}/${repo}/contents/${displayPath}")
@@ -131,7 +133,8 @@ class NoteController {
             model.addAttribute("content", "")
         }
 
-        val hash = "0b388bccbe72932dc448448650e2e68fda87218b"
+//        val hash = "0b388bccbe72932dc448448650e2e68fda87218b"
+        val hash = "e9da6ce5ea836352503f180d7fda7fc50000142a"
         val noteTree = githubService.getTree(user, repo, hash)
         model.addAttribute("noteTree", noteTree.root)
         return "note"

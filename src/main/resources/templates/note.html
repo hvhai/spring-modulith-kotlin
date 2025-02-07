@@ -8,10 +8,14 @@
         <div class="mt-5">
             <div class="container">
                 <div class="row">
+
+                </div>
+                <div class="row">
                     <div class="col-4">
                         <ul th:fragment="fragment_node(noteTree)" th:unless="${#lists.isEmpty(noteTree.children)}" >
                             <li th:each="child : ${noteTree.children}" th:inline="text">
-                                <a href="details.html" th:href="@{/note(displayPath=${child.path})}">[[${child.fileName}]]</a>
+                                <a href="details.html" th:href="@{/note(displayPath=${child.path})}" th:if="${child.path.contains('.md')}">[[${child.fileName}]]</a>
+                                <p th:unless="${child.path.contains('.md')}">[[${child.fileName}]]</p>
                                 <ul th:replace="~{this::fragment_node(${child})}"></ul>
                             </li>
                         </ul>
