@@ -129,6 +129,7 @@ class NoteController {
             val markdownUtil = MarkdownUtil()
             val html = markdownUtil.renderHtml(content)
             model.addAttribute("content", html)
+            model.addAttribute("displayPath", displayPath)
         } else {
             model.addAttribute("content", "")
         }
