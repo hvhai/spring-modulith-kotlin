@@ -13,13 +13,14 @@
                 <div class="row">
                     <div class="col-4">
                         <div id="tree1">
-                        <ul th:fragment="fragment_node(noteTree)" th:unless="${#lists.isEmpty(noteTree.children)}" >
-                            <li th:each="child : ${noteTree.children}" th:inline="text">
-                                <a href="details.html" th:href="@{/note(displayPath=${child.path})}" th:if="${child.path.contains('.md')}">[[${child.fileName}]]</a>
-                                <span th:unless="${child.path.contains('.md')}">[[${child.fileName}]]</span>
-                                <ul th:replace="~{this::fragment_node(${child})}"></ul>
-                            </li>
-                        </ul>
+                            <ul th:fragment="fragment_node(noteTree)" th:unless="${#lists.isEmpty(noteTree.children)}">
+                                <li th:each="child : ${noteTree.children}" th:inline="text">
+                                    <a href="details.html" th:href="@{/note(displayPath=${child.path})}"
+                                       th:if="${child.path.contains('.md')}">[[${child.fileName}]]</a>
+                                    <span th:unless="${child.path.contains('.md')}">[[${child.fileName}]]</span>
+                                    <ul th:replace="~{this::fragment_node(${child})}"></ul>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     <div class="col-8">
