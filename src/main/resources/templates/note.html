@@ -28,6 +28,17 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
+                    <h3>Or</h3>
+                    <form method="get" action="#"
+                          th:action="@{/note}">
+                        <div class="form-group">
+                            <label for="inputUser">CommitUrl</label>
+                            <input type="text" class="form-control" id="inputURL" placeholder="Your Github commit url"
+                                   name="url">
+                            <small id="urlHelp" class="form-text text-muted">Example: https://github.com/quanru/obsidian-example-lifeos/commit/37017a5af58979c05b5822f4e2433a1d8f2e054d</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
                 <div class="row">
                     <div class="col-4">

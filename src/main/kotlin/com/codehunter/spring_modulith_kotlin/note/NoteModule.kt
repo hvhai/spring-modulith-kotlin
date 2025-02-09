@@ -25,6 +25,20 @@ class MarkdownUtil {
 }
 
 class GithubService {
+    fun extractDataFromPath(url: String): Triple<String, String, String> {
+        val regex = Regex("https://github\\.com/([^/]+)/([^/]+)/commit/([a-f0-9]{40})")
+        val matchResult = regex.find(url)
+
+        if (matchResult != null) {
+            val (username, repository, commitHash) = matchResult.destructured
+            println("Username: $username")
+            println("Repository: $repository")
+            println("Commit Hash: $commitHash")
+            return Triple(username, repository, commitHash)
+        }
+        return Triple("", "", "")
+    }
+
     fun getContent(path: String): String {
         val client = RestClient.builder()
             .requestFactory(HttpComponentsClientHttpRequestFactory())
@@ -112,6 +126,7 @@ class NoteController {
         @RequestParam user: String?,
         @RequestParam repo: String?,
         @RequestParam hash: String?,
+        @RequestParam url: String?,
         @AuthenticationPrincipal principal: OidcUser?,
         @RequestParam displayPath: String?
     ): String {
@@ -121,15 +136,29 @@ class NoteController {
         val githubService = GithubService()
 
         // tree section
+        var selectedUser: String? = null
+        var selectedRepo: String? = null
+        var selectedHash: String? = null
+        if (url != null) {
+            val (user, repo, hash) = githubService.extractDataFromPath(url)
+            selectedUser = user
+            selectedRepo = repo
+            selectedHash = hash
+        } else {
+            selectedUser = user ?: "Froussios"
+            selectedRepo = repo ?: "Intro-To-RxJava"
+            selectedHash = hash ?: "e9da6ce5ea836352503f180d7fda7fc50000142a"
+        }
+
         val noteTree = githubService.getTree(
-            user ?: "Froussios",
-            repo ?: "Intro-To-RxJava",
-            hash ?: "e9da6ce5ea836352503f180d7fda7fc50000142a"
+            selectedUser,
+            selectedRepo,
+            selectedHash
         )
         model.addAttribute("noteTree", noteTree.root)
-        model.addAttribute("user", user ?: "Froussios")
-        model.addAttribute("repo", repo ?: "Intro-To-RxJava")
-        model.addAttribute("hash", hash ?: "e9da6ce5ea836352503f180d7fda7fc50000142a")
+        model.addAttribute("user", selectedUser)
+        model.addAttribute("repo", selectedRepo)
+        model.addAttribute("hash", selectedHash)
 
         // content section
         if (displayPath != null) {
