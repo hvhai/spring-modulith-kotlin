@@ -91,20 +91,16 @@ class GhTreeItem(
     val sha: String,
     val size: Int,
     val url: String
-) {
-}
+)
 
-class NoteTree(val root: NoteTreeItem) {
-
-}
+class NoteTree(val root: NoteTreeItem)
 
 class NoteTreeItem(
     val children: MutableList<NoteTreeItem> = mutableListOf<NoteTreeItem>(),
     val filename: String,
     val path: String,
     val parent: NoteTreeItem?
-) {
-}
+)
 
 @Controller
 @RequestMapping("/note")
@@ -113,17 +109,29 @@ class NoteController {
     @GetMapping
     fun showNote(
         model: Model,
+        @RequestParam user: String?,
+        @RequestParam repo: String?,
+        @RequestParam hash: String?,
         @AuthenticationPrincipal principal: OidcUser?,
         @RequestParam displayPath: String?
     ): String {
         if (principal != null) {
             model.addAttribute("profile", principal.claims)
         }
-//        val user = "hvhai"
-//        val repo = "public-vault"
-        val user = "Froussios"
-        val repo = "Intro-To-RxJava"
         val githubService = GithubService()
+
+        // tree section
+        val noteTree = githubService.getTree(
+            user ?: "Froussios",
+            repo ?: "Intro-To-RxJava",
+            hash ?: "e9da6ce5ea836352503f180d7fda7fc50000142a"
+        )
+        model.addAttribute("noteTree", noteTree.root)
+        model.addAttribute("user", user ?: "Froussios")
+        model.addAttribute("repo", repo ?: "Intro-To-RxJava")
+        model.addAttribute("hash", hash ?: "e9da6ce5ea836352503f180d7fda7fc50000142a")
+
+        // content section
         if (displayPath != null) {
             val content = githubService.getContent("repos/${user}/${repo}/contents/${displayPath}")
             val markdownUtil = MarkdownUtil()
@@ -134,11 +142,6 @@ class NoteController {
             model.addAttribute("content", "")
         }
 
-//        val hash = "0b388bccbe72932dc448448650e2e68fda87218b"
-        val hash = "e9da6ce5ea836352503f180d7fda7fc50000142a"
-        val noteTree = githubService.getTree(user, repo, hash)
-        model.addAttribute("noteTree", noteTree.root)
         return "note"
     }
-
 }
