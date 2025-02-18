@@ -30,6 +30,7 @@ class JpaPayment(
     }
 
     fun purchase(): JpaPayment {
+        require(this.purchaseAt == null) { "Payment already purchased" }
         log.info("Purchase payment id={}, orderId={}", this.id, this.orderId)
         return JpaPayment(id, orderId, totalAmount, Instant.now())
     }
