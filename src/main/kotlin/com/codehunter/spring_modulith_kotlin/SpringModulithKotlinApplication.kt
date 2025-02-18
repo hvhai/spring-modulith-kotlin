@@ -31,11 +31,10 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.logout.LogoutHandler
 import org.springframework.stereotype.Component
-import org.springframework.web.context.request.WebRequestInterceptor
+import org.springframework.web.servlet.HandlerInterceptor
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.IOException
 
@@ -155,8 +154,6 @@ class DirectlyConfiguredJwkSetUri {
 
 @Configuration
 class WebConfig : WebMvcConfigurer {
-    @Autowired
-    lateinit var traceHandler: TraceHandler
 
     @Bean
     fun corsConfigurer(): WebMvcConfigurer {
@@ -170,7 +167,7 @@ class WebConfig : WebMvcConfigurer {
     }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(traceHandler)
+        registry.addInterceptor(TraceHandler())
         super.addInterceptors(registry)
     }
 }
@@ -216,8 +213,7 @@ class OpenApiConfig {
 
 
 @Component
-class TraceHandler(requestInterceptor: WebRequestInterceptor) :
-    WebRequestHandlerInterceptorAdapter(requestInterceptor) {
+class TraceHandler : HandlerInterceptor {
 
     @Name("com.codehunter.spring_modulith_kotlin.HTTPEvent")
     @Label("HTTP Event")
