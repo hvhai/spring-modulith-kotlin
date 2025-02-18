@@ -1,0 +1,178 @@
+{
+  "sha": "0b388bccbe72932dc448448650e2e68fda87218b",
+  "url": "https://api.github.com/repos/hvhai/public-vault/git/trees/0b388bccbe72932dc448448650e2e68fda87218b",
+  "tree": [
+    {
+      "path": ".DS_Store",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a7eeeb07e410aa66495cb5bfe05476da0189e57",
+      "size": 6148,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/2a7eeeb07e410aa66495cb5bfe05476da0189e57"
+    },
+    {
+      "path": ".obsidian",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "828639a4516fc5993af45dc1fa2b5e6ae0a203ff",
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/trees/828639a4516fc5993af45dc1fa2b5e6ae0a203ff"
+    },
+    {
+      "path": ".obsidian/app.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e26dfeeb6e641a33dae4961196235bdb965b21b",
+      "size": 2,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/9e26dfeeb6e641a33dae4961196235bdb965b21b"
+    },
+    {
+      "path": ".obsidian/appearance.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e26dfeeb6e641a33dae4961196235bdb965b21b",
+      "size": 2,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/9e26dfeeb6e641a33dae4961196235bdb965b21b"
+    },
+    {
+      "path": ".obsidian/community-plugins.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3f66fab1da471158f6098814a494693541c1085",
+      "size": 20,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/d3f66fab1da471158f6098814a494693541c1085"
+    },
+    {
+      "path": ".obsidian/core-plugins-migration.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "436f43cf561e4d8645a8612ddb5b0dee97f2fcc5",
+      "size": 637,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/436f43cf561e4d8645a8612ddb5b0dee97f2fcc5"
+    },
+    {
+      "path": ".obsidian/core-plugins.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9405bfdc224d3e5dfe9fe6116a4fd2955ab10a72",
+      "size": 296,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/9405bfdc224d3e5dfe9fe6116a4fd2955ab10a72"
+    },
+    {
+      "path": ".obsidian/graph.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "42a46ecafa5be07ad794ed16685f35e44f55ad29",
+      "size": 493,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/42a46ecafa5be07ad794ed16685f35e44f55ad29"
+    },
+    {
+      "path": ".obsidian/plugins",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5dc9511d7865feffb8b416c9e0d6107f6c3465d2",
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/trees/5dc9511d7865feffb8b416c9e0d6107f6c3465d2"
+    },
+    {
+      "path": ".obsidian/plugins/obsidian-git",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b508a1fff7d96e2c84fd11d4bf901c9036c93924",
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/trees/b508a1fff7d96e2c84fd11d4bf901c9036c93924"
+    },
+    {
+      "path": ".obsidian/plugins/obsidian-git/data.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b49efbbaddfd4d3e016aa235f225fb260241ebad",
+      "size": 1623,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/b49efbbaddfd4d3e016aa235f225fb260241ebad"
+    },
+    {
+      "path": ".obsidian/plugins/obsidian-git/main.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d0d2c09d35ffa73288b23fc4f01b44e67acc7117",
+      "size": 1504073,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/d0d2c09d35ffa73288b23fc4f01b44e67acc7117"
+    },
+    {
+      "path": ".obsidian/plugins/obsidian-git/manifest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3179c1e6f53c5d1094feb1aa00fc3bee3e7290ef",
+      "size": 325,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/3179c1e6f53c5d1094feb1aa00fc3bee3e7290ef"
+    },
+    {
+      "path": ".obsidian/plugins/obsidian-git/styles.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5ad0cc44f5a8c45e4f130ab1b7f03b9ca54f209",
+      "size": 13916,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/d5ad0cc44f5a8c45e4f130ab1b7f03b9ca54f209"
+    },
+    {
+      "path": ".obsidian/workspace.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83371bd548b61f272e62a49e0db3c3e48f5e8e09",
+      "size": 3942,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/83371bd548b61f272e62a49e0db3c3e48f5e8e09"
+    },
+    {
+      "path": "01 - projects",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "155b696c6144abc651ec5442d058ee6b8ed80591",
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/trees/155b696c6144abc651ec5442d058ee6b8ed80591"
+    },
+    {
+      "path": "01 - projects/.DS_Store",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04c3d9811e2ac525ed72670a8616e8356182b86d",
+      "size": 6148,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/04c3d9811e2ac525ed72670a8616e8356182b86d"
+    },
+    {
+      "path": "01 - projects/poe",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "abfb7307f4c0d964a5df6959f755c5a9d85975f0",
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/trees/abfb7307f4c0d964a5df6959f755c5a9d85975f0"
+    },
+    {
+      "path": "01 - projects/poe/poe 3.25.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c553b16d2c8340c1544381b7765ef1e3ea9b9e54",
+      "size": 158,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/c553b16d2c8340c1544381b7765ef1e3ea9b9e54"
+    },
+    {
+      "path": "01 - projects/poe/poe_3_25-blade-vortex.ahk",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da2f6d01e08fc12faca4efe9fd952d943c9a34ff",
+      "size": 1319,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/da2f6d01e08fc12faca4efe9fd952d943c9a34ff"
+    },
+    {
+      "path": "01 - projects/poe/poe_3_25.ahk",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "821951548916de0660fe1193e7ae5e7ae6a72ace",
+      "size": 1265,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/821951548916de0660fe1193e7ae5e7ae6a72ace"
+    },
+    {
+      "path": "Welcome.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f9bca28863e372659ff0bbc5949151e9c2a7a44c",
+      "size": 203,
+      "url": "https://api.github.com/repos/hvhai/public-vault/git/blobs/f9bca28863e372659ff0bbc5949151e9c2a7a44c"
+    }
+  ],
+  "truncated": false
+}
