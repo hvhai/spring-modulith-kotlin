@@ -8,6 +8,10 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import jakarta.annotation.PostConstruct
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jdk.jfr.Category
+import jdk.jfr.Event
+import jdk.jfr.Label
+import jdk.jfr.Name
 import org.apache.commons.lang3.StringUtils
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,8 +30,12 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.logout.LogoutHandler
+import org.springframework.stereotype.Component
+import org.springframework.web.context.request.WebRequestInterceptor
 import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapter
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.IOException
 
@@ -85,7 +93,7 @@ class DirectlyConfiguredJwkSetUri {
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/v3/**",
-                        "/","/index.html",
+                        "/", "/index.html",
                     )
                     .permitAll()
                     .anyRequest().authenticated()
@@ -113,7 +121,7 @@ class DirectlyConfiguredJwkSetUri {
             .authorizeHttpRequests({
                 it
                     .requestMatchers(
-                        "/","/index.html",
+                        "/", "/index.html",
                         "/h2-console/**", "/actuator/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -147,6 +155,9 @@ class DirectlyConfiguredJwkSetUri {
 
 @Configuration
 class WebConfig : WebMvcConfigurer {
+    @Autowired
+    lateinit var traceHandler: TraceHandler
+
     @Bean
     fun corsConfigurer(): WebMvcConfigurer {
         return object : WebMvcConfigurer {
@@ -156,6 +167,11 @@ class WebConfig : WebMvcConfigurer {
                     .allowedMethods("*")
             }
         }
+    }
+
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(traceHandler)
+        super.addInterceptors(registry)
     }
 }
 
@@ -195,6 +211,36 @@ class OpenApiConfig {
             .group("fruit-ordering")
             .pathsToMatch("/api/fruit-ordering/**")
             .build()
+    }
+}
+
+
+@Component
+class TraceHandler(requestInterceptor: WebRequestInterceptor) :
+    WebRequestHandlerInterceptorAdapter(requestInterceptor) {
+
+    @Name("com.codehunter.spring_modulith_kotlin.HTTPEvent")
+    @Label("HTTP Event")
+    @Category("Modulith App", "HttpRequest")
+    class HTTPEvent(@Label("Http Method") val method: String, @Label("Request URL") val path: String) : Event()
+
+    lateinit var event: HTTPEvent
+
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+        event = HTTPEvent(request.method, request.requestURI)
+        event.begin()
+        return super.preHandle(request, response, handler)
+    }
+
+    override fun afterCompletion(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any,
+        ex: Exception?
+    ) {
+        event.end()
+        event.commit()
+        super.afterCompletion(request, response, handler, ex)
     }
 }
 
