@@ -103,4 +103,30 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	testLogging {
+		events("passed", "skipped", "failed")
+		exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+		showExceptions = true
+		showCauses = true
+		showStackTraces = true
+	}
+	val failedTests = mutableListOf<String>()
+	afterTest(KotlinClosure2<TestDescriptor, TestResult, Unit>({ desc: TestDescriptor, result: TestResult ->
+		if (result.resultType == TestResult.ResultType.FAILURE) {
+			val testClass = desc.className ?: "UnknownClass"
+			val testMethod = desc.name ?: "UnknownMethod"
+			failedTests.add("$testClass.$testMethod: ${desc.displayName}")
+		}
+	}))
+	afterSuite(KotlinClosure2<TestDescriptor, TestResult, Unit>({ desc: TestDescriptor, result: TestResult ->
+		if (desc.parent == null) { // will match the outermost suite
+			println("Test result: ${result.resultType}")
+			println("Test summary: ${result.testCount} tests, ${result.successfulTestCount} succeeded, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped")
+			if (failedTests.isNotEmpty()) {
+				println("Failed tests:")
+				failedTests.forEach { println(it) }
+			}
+		}
+	}))
+
 }
