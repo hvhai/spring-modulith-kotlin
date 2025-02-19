@@ -87,7 +87,9 @@ class GithubService {
 
     private fun displayTree(noteTree: NoteTree, indent: String = "") {
         noteTree.root.children.forEach {
-            println("$indent${it.filename} [${it.path}]")
+            if (it.path.contains(".md") || it.children.isNotEmpty()) {
+                println("$indent${it.filename} [${it.path}]")
+            }
             displayTree(
                 NoteTree(NoteTreeItem(it.children, it.filename, it.path, it.parent)), "$indent  "
             )

@@ -34,7 +34,7 @@ class NoteModuleTest {
         val githubService = GithubService()
 
         // When
-        val tree = githubService.getTree("hvhai", "public-vault", "0b388bccbe72932dc448448650e2e68fda87218b")
+        val tree = githubService.getTree("Froussios", "Intro-To-RxJava", "e9da6ce5ea836352503f180d7fda7fc50000142a")
 
         // Then
         assert(tree.root.children.isNotEmpty())
