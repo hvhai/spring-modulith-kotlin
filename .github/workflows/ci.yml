@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Approval
-        uses: actions/wait@v1
+        uses: trstringer/manual-approval@v1
 
   docker:
     needs: approval
