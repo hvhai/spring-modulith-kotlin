@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build:
@@ -39,10 +38,16 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
-  docker:
+  approval:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Approval
+        uses: actions/wait@v1
+
+  docker:
+    needs: approval
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
