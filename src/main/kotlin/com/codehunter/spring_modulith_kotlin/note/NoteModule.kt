@@ -136,14 +136,14 @@ class NoteController {
         val githubService = GithubService()
 
         // tree section
-        var selectedUser: String? = null
-        var selectedRepo: String? = null
-        var selectedHash: String? = null
+        val selectedUser: String?
+        val selectedRepo: String?
+        val selectedHash: String?
         if (url != null) {
-            val (user, repo, hash) = githubService.extractDataFromPath(url)
-            selectedUser = user
-            selectedRepo = repo
-            selectedHash = hash
+            val (userFromUrl, repoFromUrl, hashFromUrl) = githubService.extractDataFromPath(url)
+            selectedUser = userFromUrl
+            selectedRepo = repoFromUrl
+            selectedHash = hashFromUrl
         } else {
             selectedUser = user ?: "Froussios"
             selectedRepo = repo ?: "Intro-To-RxJava"
