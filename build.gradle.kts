@@ -78,7 +78,7 @@ dependencies {
 	testImplementation("com.c4-soft.springaddons:spring-addons-oauth2-test:7.1.10")
 	testImplementation("org.springframework.security:spring-security-test")
 
-	testImplementation("org.wiremock:wiremock-standalone:3.10.0")
+	testImplementation("org.wiremock:wiremock-standalone:3.12.1")
 
 	testImplementation("org.springframework.modulith:spring-modulith-starter-test")
 }
