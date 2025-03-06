@@ -1,6 +1,6 @@
 # Use the official maven/Java 8 image to create a build artifact.
 # https://hub.docker.com/_/maven
-FROM gradle:8.11-jdk21-alpine AS build
+FROM gradle:8.13-jdk21-alpine AS build
 #FROM openjdk:17-jdk-slim as build
 WORKDIR /code
 #
