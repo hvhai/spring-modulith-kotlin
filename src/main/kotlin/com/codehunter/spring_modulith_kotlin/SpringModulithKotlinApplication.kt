@@ -12,6 +12,7 @@ import jdk.jfr.Category
 import jdk.jfr.Event
 import jdk.jfr.Label
 import jdk.jfr.Name
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +23,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
+import org.springframework.data.domain.AuditorAware
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -37,8 +40,10 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.IOException
+import java.util.*
 
 @SpringBootApplication
+@EnableJpaAuditing
 class SpringModulithKotlinApplication {
     @Autowired
     lateinit var environment: Environment
@@ -62,7 +67,18 @@ class SpringModulithKotlinApplication {
         propertyKeys.forEach { println(" $it  = ${environment.getProperty(it)}") }
     }
 
-
+    @Bean
+    open fun auditorProvider(): AuditorAware<String> {
+        return AuditorAware<String> {
+            Optional.of(
+                "prospring6-" + RandomStringUtils.random(
+                    6,
+                    true,
+                    true
+                )
+            )
+        }
+    }
 }
 
 @Configuration
@@ -240,6 +256,22 @@ class TraceHandler : HandlerInterceptor {
     }
 }
 
+//@Component
+//class AuditorAwareImpl : AuditorAware<String> {
+//    override fun getCurrentAuditor(): Optional<String> {
+//        val authentication: Authentication? = SecurityContextHolder.getContext().authentication
+//        val current = Span.current()
+//        val traceId = current.spanContext.traceId
+////        return Optional.of(traceId)
+//        return Optional.of("test")
+//
+////        if (authentication == null || !authentication.isAuthenticated()) {
+////            return Optional.empty()
+////        }
+////
+////        return Optional.of(authentication.getName())
+//    }
+//}
 
 fun main(args: Array<String>) {
     runApplication<SpringModulithKotlinApplication>(*args)

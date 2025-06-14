@@ -3,6 +3,8 @@ package com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.slf4j.LoggerFactory
+import org.springframework.data.annotation.CreatedBy
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
@@ -12,8 +14,31 @@ import java.time.Instant
 
 class ProductOutOfStockException(message: String?, val product: JpaWarehouseProduct) : Exception(message)
 
-class JpaListener {
+open class GenericJpaListener<T> {
     val log = LoggerFactory.getLogger(this::class.java)
+
+    @PostPersist
+    private fun afterCreate(entity: T) {
+        log.info("[PostPersist] Created entity: {}", entity)
+    }
+
+    @PostLoad
+    private fun postLoad(entity: T) {
+        log.info("[PostLoad] Loaded entity: {}", entity)
+    }
+
+    @PreUpdate
+    private fun preUpdate(entity: T) {
+        log.info("[PreUpdate] Updating entity: {}", entity)
+    }
+
+    @PostUpdate
+    private fun postUpdate(entity: T) {
+        log.info("[PostUpdate] Updated entity: {}", entity)
+    }
+}
+
+class JpaListener : GenericJpaListener<JpaWarehouseProduct>() {
 
     @PostPersist
     private fun afterCreate(product: JpaWarehouseProduct) {
@@ -46,10 +71,9 @@ class JpaListener {
                 product = product,
                 oldQuantity = oldQuantity,
                 newQuantity = newQuantity,
-                createdAt = Instant.now()
             )
             // Add to the product's history collection
-            product.addProduct(history)
+//            product.addProductHistory(history)
             // Persist the history entity manually
             // Since we don't have direct access to EntityManager here, use a workaround:
             JpaListenerHelper.persistHistory(history)
@@ -93,19 +117,17 @@ data class JpaWarehouseProduct(
     @OneToMany(
         mappedBy = "product",
         fetch = FetchType.LAZY,
-        orphanRemoval = true,
+//        orphanRemoval = true,
         cascade = [CascadeType.ALL]
     )
-    private val _productHistory = mutableListOf<JpaWarehouseProductHistory>()
-    val productHistory: List<JpaWarehouseProductHistory>
-        get() = _productHistory.toList()
-
-    fun addProduct(newProductHistory: JpaWarehouseProductHistory) {
-        _productHistory += newProductHistory
-    }
+    private val productHistories = mutableListOf<JpaWarehouseProductHistory>()
 
     @Transient
     var originalQuantity: Int? = null
+
+    fun addProductHistory(productHistory: JpaWarehouseProductHistory) {
+        productHistories.add(productHistory)
+    }
 
     override fun toString(): String {
         return "JpaWarehouseProduct{" +
@@ -134,6 +156,7 @@ interface WarehouseProductHistoryRepository : JpaRepository<JpaWarehouseProductH
 
 @Entity
 @Table(name = "fruit_warehouse_product_history")
+@EntityListeners(AuditingEntityListener::class)
 data class JpaWarehouseProductHistory(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -141,13 +164,16 @@ data class JpaWarehouseProductHistory(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id")
     val product: JpaWarehouseProduct,
+    @Column(name = "created_by", nullable = false)
+    @CreatedBy
+    var createdBy: String? = null,
     @Column(name = "old_quantity")
     val oldQuantity: Int,
     @Column(name = "new_quantity", nullable = false)
     val newQuantity: Int,
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
-    val createdAt: Instant
+    var createdAt: Instant? = null
 )
 
 @Component
