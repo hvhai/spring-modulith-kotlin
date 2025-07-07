@@ -13,6 +13,7 @@ import com.codehunter.spring_modulith_kotlin.fruitordering_order.internal.OrderR
 import com.codehunter.spring_modulith_kotlin.fruitordering_payment.internal.PaymentRepository
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.JpaWarehouseProduct
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.WarehouseProductRepository
+import com.github.tomakehurst.wiremock.stubbing.Scenario.withName
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +25,7 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.Duration
 
 @Testcontainers
 @EnableScenarios
@@ -72,6 +74,7 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
             )
         )
         scenario.stimulate(Runnable { orderController.createOrder(createOrderRequestDTO) })
+            .customize {it.atMost(Duration.ofSeconds(30)) }
             .andWaitForEventOfType(PaymentEvent::class.java)
             .matching({ event: PaymentEvent ->
                 event.paymentEventType.equals(PaymentEvent.PaymentEventType.CREATED)
