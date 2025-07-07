@@ -12,7 +12,6 @@ import jdk.jfr.Category
 import jdk.jfr.Event
 import jdk.jfr.Label
 import jdk.jfr.Name
-import org.apache.commons.lang3.RandomStringUtils
 import org.apache.commons.lang3.StringUtils
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,6 +39,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.IOException
+import java.security.SecureRandom
 import java.util.*
 
 @SpringBootApplication
@@ -75,11 +75,7 @@ class JpaAuditingConfig {
     fun auditorAware(): AuditorAware<String> {
         return AuditorAware<String> {
             Optional.of(
-                "prospring6-" + RandomStringUtils.random(
-                    6,
-                    true,
-                    true
-                )
+                "prospring6-" + SecureRandom().nextInt()
             )
         }
     }
