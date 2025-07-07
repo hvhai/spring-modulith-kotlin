@@ -23,7 +23,6 @@ import org.springframework.modulith.test.Scenario
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
@@ -35,11 +34,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
 @Import(value = arrayOf(TestSecurityConfiguration::class, TestContainerConfig::class))
 @ActiveProfiles("integration")
-@TestPropertySource(
-    properties = [
-        "spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true"
-    ]
-)
 class FruitOrderingIntegrationTest : IntegrationBaseTest() {
     @Autowired
     lateinit var orderController: OrderController
@@ -88,7 +82,7 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
                 val allOrderAfterCreate: List<JpaOrder> = orderRepository.findAll()
                 assertThat(allOrderAfterCreate).hasSize(1)
                 val orderId: String = allOrderAfterCreate[0].id!!
-                val createdOrder: JpaOrder = orderRepository.findById(orderId).get()
+                val createdOrder: JpaOrder = orderRepository.findByIdWithProducts(orderId).get()
 
                 // with selected product
                 assertThat(createdOrder.products).hasSize(1)
