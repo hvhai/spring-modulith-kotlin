@@ -43,7 +43,6 @@ import java.io.IOException
 import java.util.*
 
 @SpringBootApplication
-@EnableJpaAuditing
 class SpringModulithKotlinApplication {
     @Autowired
     lateinit var environment: Environment
@@ -67,8 +66,13 @@ class SpringModulithKotlinApplication {
         propertyKeys.forEach { println(" $it  = ${environment.getProperty(it)}") }
     }
 
+}
+
+@Configuration
+@EnableJpaAuditing
+class JpaAuditingConfig {
     @Bean
-    open fun auditorProvider(): AuditorAware<String> {
+    fun auditorAware(): AuditorAware<String> {
         return AuditorAware<String> {
             Optional.of(
                 "prospring6-" + RandomStringUtils.random(
