@@ -14,44 +14,20 @@ import java.time.Instant
 
 class ProductOutOfStockException(message: String?, val product: JpaWarehouseProduct) : Exception(message)
 
-open class GenericJpaListener<T> {
+class JpaListener {
     val log = LoggerFactory.getLogger(this::class.java)
-
     @PostPersist
-    private fun afterCreate(entity: T) {
-        log.info("[PostPersist] Created entity: {}", entity)
-    }
-
-    @PostLoad
-    private fun postLoad(entity: T) {
-        log.info("[PostLoad] Loaded entity: {}", entity)
-    }
-
-    @PreUpdate
-    private fun preUpdate(entity: T) {
-        log.info("[PreUpdate] Updating entity: {}", entity)
-    }
-
-    @PostUpdate
-    private fun postUpdate(entity: T) {
-        log.info("[PostUpdate] Updated entity: {}", entity)
-    }
-}
-
-class JpaListener : GenericJpaListener<JpaWarehouseProduct>() {
-
-    @PostPersist
-    private fun afterCreate(product: JpaWarehouseProduct) {
+    private fun afterCreate(product: QuantityAuditableEntity) {
         log.info("[PostPersist] JpaWarehouseProduct create product {}", product)
     }
 
     @PostLoad
-    private fun postLoad(product: JpaWarehouseProduct) {
+    private fun postLoad(product: QuantityAuditableEntity) {
         product.originalQuantity = product.quantity
     }
 
     @PreUpdate
-    private fun preUpdate(product: JpaWarehouseProduct) {
+    private fun preUpdate(product: QuantityAuditableEntity) {
         val oldQuantity = product.originalQuantity
         val newQuantity = product.quantity
         log.info(
@@ -61,10 +37,10 @@ class JpaListener : GenericJpaListener<JpaWarehouseProduct>() {
     }
 
     @PostUpdate
-    private fun postUpdate(product: JpaWarehouseProduct) {
+    private fun postUpdate(product: QuantityAuditableEntity) {
         val oldQuantity = product.originalQuantity
         val newQuantity = product.quantity
-        if (oldQuantity != null && oldQuantity != newQuantity) {
+        if (oldQuantity != null && oldQuantity != newQuantity && product is JpaWarehouseProduct) {
             // Create a new history record
             val history = JpaWarehouseProductHistory(
                 id = 0, // Will be auto-generated
@@ -101,19 +77,14 @@ object JpaListenerHelper {
     }
 }
 
-@Entity
-@Table(name = "fruit_warehouse_product")
+@MappedSuperclass
 @EntityListeners(JpaListener::class)
-data class JpaWarehouseProduct(
+abstract class QuantityAuditableEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String?,
-    @Column(unique = true)
-    val name: String,
     val quantity: Int,
-    val price: BigDecimal,
 ) {
-
     @OneToMany(
         mappedBy = "product",
         fetch = FetchType.LAZY,
@@ -128,6 +99,18 @@ data class JpaWarehouseProduct(
     fun addProductHistory(productHistory: JpaWarehouseProductHistory) {
         productHistories.add(productHistory)
     }
+}
+
+@Entity
+@Table(name = "fruit_warehouse_product")
+data class JpaWarehouseProduct(
+    override val id: String? = null,
+    @Column(unique = true)
+    val name: String,
+    override val quantity: Int,
+    val price: BigDecimal,
+) : QuantityAuditableEntity(id, quantity){
+
 
     override fun toString(): String {
         return "JpaWarehouseProduct{" +
