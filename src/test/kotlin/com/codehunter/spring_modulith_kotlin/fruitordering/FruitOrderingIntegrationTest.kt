@@ -13,6 +13,7 @@ import com.codehunter.spring_modulith_kotlin.fruitordering_order.internal.OrderR
 import com.codehunter.spring_modulith_kotlin.fruitordering_payment.internal.PaymentRepository
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.JpaWarehouseProduct
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.WarehouseProductRepository
+import com.github.tomakehurst.wiremock.stubbing.Scenario.withName
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,23 +24,18 @@ import org.springframework.modulith.test.Scenario
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.Duration
 
 @Testcontainers
 @EnableScenarios
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@DirtiesContext
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
 @Import(value = arrayOf(TestSecurityConfiguration::class, TestContainerConfig::class))
 @ActiveProfiles("integration")
-@TestPropertySource(
-    properties = [
-        "spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true"
-    ]
-)
 class FruitOrderingIntegrationTest : IntegrationBaseTest() {
     @Autowired
     lateinit var orderController: OrderController
@@ -78,6 +74,7 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
             )
         )
         scenario.stimulate(Runnable { orderController.createOrder(createOrderRequestDTO) })
+            .customize {it.atMost(Duration.ofSeconds(30)) }
             .andWaitForEventOfType(PaymentEvent::class.java)
             .matching({ event: PaymentEvent ->
                 event.paymentEventType.equals(PaymentEvent.PaymentEventType.CREATED)
@@ -88,7 +85,7 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
                 val allOrderAfterCreate: List<JpaOrder> = orderRepository.findAll()
                 assertThat(allOrderAfterCreate).hasSize(1)
                 val orderId: String = allOrderAfterCreate[0].id!!
-                val createdOrder: JpaOrder = orderRepository.findById(orderId).get()
+                val createdOrder: JpaOrder = orderRepository.findByIdWithProducts(orderId).get()
 
                 // with selected product
                 assertThat(createdOrder.products).hasSize(1)
