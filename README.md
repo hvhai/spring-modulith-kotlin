@@ -1,36 +1,75 @@
-# Modulith project using Spring Native and Spring Modulith
+# spring-modulith-kotlin
 
-## Commands
-``` shell 
+Spring Boot application written in Kotlin and organized with Spring Modulith. The project contains a Todo API and a fruit-ordering flow, with a Thymeleaf web UI.
+
+## Stack
+
+- Java 21, Kotlin 1.9.25
+- Spring Boot 3.4.1
+- Spring Modulith 1.3.1
+- Spring MVC, Thymeleaf, Spring Security OAuth2/Auth0
+- Spring Data JPA, Flyway, H2 and MySQL
+- OpenAPI/Swagger UI, Actuator, and Grafana LGTM observability (Prometheus, Tempo, Loki)
+- Gradle 8.11.1 (wrapper)
+
+## Prerequisites
+
+- JDK 21
+- Docker Desktop for MySQL, the observability stack, or Testcontainers-based tests
+
+## Run locally
+
+```shell
+./gradlew bootRun
+```
+
+On Windows:
+
+```powershell
+.\gradlew.bat bootRun
+```
+
+The application listens on `http://localhost:8080`. OAuth2 client settings use `CLIENT_ID` and `CLIENT_SECRET`; configure these when exercising authenticated browser flows.
+
+## Tests
+
+```powershell
+.\gradlew.bat test       # Windows
+./gradlew test            # Linux/macOS
+./gradlew check           # tests plus other verification tasks
+```
+
+Test reports are generated at `build/reports/tests/test/index.html`.
+
+## Infrastructure
+
+```shell
+docker compose up -d
+```
+
+| Service | URL | Purpose |
+|---|---|---|
+| MySQL | `localhost:3316` | database |
+| Grafana | http://localhost:3000 | single observability UI (anonymous access) |
+| Prometheus | http://localhost:9090 | metrics, scrapes `/actuator/prometheus` |
+| Tempo | http://localhost:3200 | traces, OTLP on 4317/4318 |
+| Loki | http://localhost:3100 | logs |
+
+### Run modes
+
+- **App on the host** — `docker compose up -d` for infrastructure, then
+  `./gradlew bootRun --args='--spring.profiles.active=local'`.
+  The `local` profile enables tracing and the Loki log appender.
+- **Everything containerized** — `docker compose -f docker-compose-full.yml up`.
+
+The two modes publish the same host ports, so stop one before starting the other.
+See [`docs/deployment-guide.md`](docs/deployment-guide.md) for trace/log correlation.
+
+## Docker image
+
+```shell
 docker build . --tag spring-modulith-kotlin:latest --platform=linux/amd64
 docker run --rm -p 8080:8080 spring-modulith-kotlin:latest
-docker run --rm -p 8080:8080 -e APP_METHOD_API_TOKEN='' -e APP_H2_PASS='' -e CLIENT_ID='' -e CLIENT_SECRET='' -e DOMAIN='' spring-modulith-kotlin:latest
 ```
 
-```shell
-docker tag spring-modulith-kotlin:latest codehunter6323/spring-modulith-kotlin:latest
-docker push codehunter6323/spring-modulith-kotlin:latest
-```
-```shell
-# show docker account list
-less ~/.docker/config.json
-# run docker image test
-docker run -it --rm --entrypoint /bin/bash ghcr.io/graalvm/native-image-community:21
- 
-docker run -it --rm --entrypoint /bin/bash ghcr.io/graalvm/graalvm-community:21
-docker run -it --rm --entrypoint /bin/bash ghcr.io/graalvm/native-image-community:21-muslib
-docker run -it --rm --entrypoint /bin/bash ghcr.io/graalvm/jdk-community:21
-```
-
-```shell
-# run local zipkin
-docker run -d -p 9411:9411 openzipkin/zipkin  
-```
-
-https://hilla.dev/blog/ai-chatbot-in-java/deploying-a-spring-boot-app-as-a-graalvm-native-image-with-docker/
-
-[GraalVM gu remove](https://github.com/oracle/graal/issues/6855)
-
-
-## Food Ordering flow
-![fruits-ordering-flow.png](doc/fruits-ordering-flow.png)
+See [`docs/`](docs/) for architecture, development standards, deployment notes, and the roadmap.
