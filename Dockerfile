@@ -1,7 +1,6 @@
 # Use the official maven/Java 8 image to create a build artifact.
 # https://hub.docker.com/_/maven
 FROM gradle:8.11-jdk21-alpine AS build
-#FROM openjdk:17-jdk-slim as build
 WORKDIR /code
 #
 # # Copy local code to the container image.
@@ -14,10 +13,14 @@ RUN gradle clean build --no-daemon -x test
 #
 # Package stage
 #
-# It's important to use OpenJDK 8u191 or above that has container support enabled.
-# https://hub.docker.com/r/adoptopenjdk/openjdk8
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM openjdk:21-jdk-slim
+#
+# NOTE: the build stage above is gradle:8.11-jdk21-alpine (musl libc) while this runtime stage
+# is eclipse-temurin (glibc). This libc mismatch is intentional and correct: only the fat JAR
+# crosses the stage boundary (COPY --from=build below), and a JAR is libc- and
+# architecture-neutral bytecode. There is no JNI and no native-image artifact carried over.
+# Do not "harmonise" the two stages onto the same libc.
+FROM eclipse-temurin:21.0.12_8-jre-noble
 
 WORKDIR /app
 # Copy the jar to the production image from the builder stage.
