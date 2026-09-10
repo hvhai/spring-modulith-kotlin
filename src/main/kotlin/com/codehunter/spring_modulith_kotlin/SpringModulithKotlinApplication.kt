@@ -50,7 +50,7 @@ class SpringModulithKotlinApplication {
             "management.endpoint.env.show-values",
             "management.tracing.sampling.probability",
             "management.tracing.enabled",
-            "management.otlp.tracing.endpoint",
+            "management.zipkin.tracing.endpoint",
             "spring.datasource.url",
             "spring.h2.console.enabled",
             "spring.h2.console.path",
