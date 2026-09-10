@@ -56,7 +56,7 @@ dependencies {
 	implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
 
 	// swagger
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.9.1")
 
 	// markdown
 	implementation("org.commonmark:commonmark:0.24.0")
