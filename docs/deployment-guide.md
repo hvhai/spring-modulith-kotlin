@@ -81,7 +81,16 @@ To view logs and find the associated trace:
 
 Profiling via Pyroscope collects CPU and Java Flight Recorder (JFR) data from the running application. The Pyroscope Java agent is always attached by the Dockerfile's `-javaagent` flag, but profiling is disabled by default (`PYROSCOPE_AGENT_ENABLED=false`) so that running the container standalone emits no errors.
 
-Profiling is automatically enabled in `docker-compose-full.yml` (containerized mode). On a Windows host running in app-on-host mode, profiling is **not supported**: the Pyroscope agent uses async-profiler, whose agent jar ships native libraries for linux-x64, linux-arm64 and macOS only, with no Windows equivalent. WSL is a Linux environment and is not affected by this limitation. The `PYROSCOPE_AGENT_ENABLED` environment variable gates profiling; leaving it false avoids initialization errors, but profiles will not be collected on Windows.
+Profiling is enabled automatically in `docker-compose-full.yml` (containerized mode) and gated everywhere else by `PYROSCOPE_AGENT_ENABLED`, which defaults to false in the image so a standalone `docker run` emits no connection errors.
+
+The agent offers two profiler types, selected with `PYROSCOPE_PROFILER_TYPE`:
+
+- `ASYNC` (the agent's default) uses async-profiler. Its jar ships native libraries for linux-x64, linux-arm64 and macOS only, with **no Windows build**, so it cannot profile an app running directly on a Windows host. This is what containers use, and it produces the richer profile.
+- `JFR` samples through JDK Flight Recorder and needs no native library, so it **does work on a Windows host**. Verified by running the app on Windows with `PYROSCOPE_PROFILER_TYPE=JFR` and confirming application frames arrived in Pyroscope.
+
+WSL is a Linux environment and is not subject to the `ASYNC` limitation.
+
+When attaching the agent to a host JVM, prefer a targeted flag over `JAVA_TOOL_OPTIONS`: the latter applies to every JVM the command starts, so the Gradle daemon gets profiled alongside the application.
 
 To view profiles in Grafana:
 

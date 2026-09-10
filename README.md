@@ -61,7 +61,9 @@ docker compose up -d
 - **App on the host** — `docker compose up -d` for infrastructure, then
   `./gradlew bootRun --args='--spring.profiles.active=local'`.
   The `local` profile enables tracing and the Loki log appender.
-  **Note:** Continuous profiling works on Linux/macOS hosts only; on Windows, use containerized mode.
+  **Note:** the default `ASYNC` profiler uses async-profiler, which has no Windows native library.
+  To profile the app running on a Windows host, set `PYROSCOPE_PROFILER_TYPE=JFR`, which samples
+  through JDK Flight Recorder instead. Containers are unaffected and keep the `ASYNC` default.
 - **Everything containerized** — `docker compose -f docker-compose-full.yml up`.
   Profiling is fully functional in this mode on all platforms.
 
