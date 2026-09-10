@@ -31,13 +31,13 @@ The OpenAPI configuration declares bearer JWT authentication for documented APIs
 
 ## Data flow
 
-HTTP requests enter Spring MVC, pass through the applicable security chain and tracing interceptor, then reach a feature module. The module performs business logic, accesses JPA repositories, and persists to H2 or MySQL. Flyway initializes the selected schema. Domain/application events can be handled within the modular monolith through Spring Modulith. Request traceId and spanId enter the Micrometer MDC, are exported on the span to Tempo over OTLP, and are rendered into the log line sent to Loki, enabling bidirectional correlation between traces and logs in Grafana.
+HTTP requests enter Spring MVC, pass through the applicable security chain and tracing interceptor, then reach a feature module. The module performs business logic, accesses JPA repositories, and persists to H2 or MySQL. Flyway initializes the selected schema. Domain/application events can be handled within the modular monolith through Spring Modulith. Request traceId and spanId enter the Micrometer MDC, are exported on the span to Tempo over OTLP, and are rendered into the log line sent to Loki, enabling bidirectional correlation between traces and logs in Grafana. In containerized environments, the Pyroscope Java agent continuously samples CPU using the itimer event and exports profiles to Pyroscope for analysis alongside traces, logs, and metrics. Allocation and lock profiling are available in the agent but are not enabled.
 
 ## External services
 
 - **Auth0/OIDC:** JWT key retrieval and browser OAuth2 login.
 - **MySQL:** containerized relational database for MySQL-oriented environments.
-- **Grafana LGTM stack:** Prometheus (9090) scrapes application metrics; Tempo (3200, OTLP 4317/4318) collects traces pushed over OTLP HTTP; Loki (3100) receives logs pushed by the loki4j Logback appender. Grafana (3000) is the single UI with provisioned datasources.
+- **Grafana LGTM stack with profiling:** Prometheus (9090) scrapes application metrics; Tempo (3200, OTLP 4317/4318) collects traces pushed over OTLP HTTP; Loki (3100) receives logs pushed by the loki4j Logback appender; Pyroscope (4040) collects CPU and JFR profiling data via the Pyroscope Java agent. Grafana (3000) is the single UI with provisioned datasources for metrics, traces, logs, and profiles.
 
 ## Deployment topology
 

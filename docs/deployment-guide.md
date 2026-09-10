@@ -5,7 +5,7 @@
 - Java 21 for direct JVM execution, or Docker for container deployment.
 - Auth0/OIDC application credentials for authenticated flows.
 - H2 for the default in-memory setup, or MySQL for a persistent deployment.
-- The Grafana LGTM observability stack (Prometheus, Tempo, Loki, Grafana) is optional for running the app, but required for metrics, traces, and logs.
+- The Grafana LGTM observability stack (Prometheus, Tempo, Loki, Pyroscope, Grafana) is optional for running the app, but required for metrics, traces, logs, and profiling.
 
 ## Local supporting services
 
@@ -13,7 +13,7 @@
 docker compose up -d
 ```
 
-This starts MySQL on host port `3316`, Prometheus on `9090`, Tempo on `3200`, Loki on `3100`, and Grafana on `3000`. Supply `MYSQL_ROOT_PASSWORD` in the environment before starting Compose.
+This starts MySQL on host port `3316`, Prometheus on `9090`, Tempo on `3200`, Loki on `3100`, Pyroscope on `4040`, and Grafana on `3000`. Supply `MYSQL_ROOT_PASSWORD` in the environment before starting Compose.
 
 ## Build and run with Gradle
 
@@ -59,6 +59,7 @@ Never place real credentials in source control or image layers.
 - Prometheus: `http://localhost:9090` (Status -> Targets)
 - Tempo: `http://localhost:3200`
 - Loki: `http://localhost:3100`
+- Pyroscope: `http://localhost:4040`
 
 ## Trace and log correlation
 
@@ -76,11 +77,23 @@ To view logs and find the associated trace:
 3. Query logs with label filter `{app="spring-modulith-kotlin"}`.
 4. Expand a log line and look for "View Trace" — this links to the trace in Tempo.
 
+## Continuous profiling
+
+Profiling via Pyroscope collects CPU and Java Flight Recorder (JFR) data from the running application. The Pyroscope Java agent is always attached by the Dockerfile's `-javaagent` flag, but profiling is disabled by default (`PYROSCOPE_AGENT_ENABLED=false`) so that running the container standalone emits no errors.
+
+Profiling is automatically enabled in `docker-compose-full.yml` (containerized mode). On a Windows host running in app-on-host mode, profiling is **not supported**: the Pyroscope agent uses async-profiler, whose agent jar ships native libraries for linux-x64, linux-arm64 and macOS only, with no Windows equivalent. WSL is a Linux environment and is not affected by this limitation. The `PYROSCOPE_AGENT_ENABLED` environment variable gates profiling; leaving it false avoids initialization errors, but profiles will not be collected on Windows.
+
+To view profiles in Grafana:
+
+1. Navigate to Explore.
+2. Select Pyroscope as the datasource.
+3. Pick a timerange and use the service selector to drill into `spring-modulith-kotlin` profiles.
+
 ## Security considerations
 
 The application exposes `/actuator/prometheus` (and other actuator endpoints) without authentication because `management.endpoints.web.exposure.include=*` and `/actuator/**` is permitAll in both Spring Security filter chains. Adding the Prometheus registry surfaces application metrics alongside sensitive actuator data (e.g. `env` with `show-values=ALWAYS`). This configuration is appropriate for local development only. Before any non-local deployment, restrict actuator exposure and remove or protect the metrics endpoint; use environment-specific Spring profiles to separate local and production configurations.
 
-Grafana runs with anonymous Admin access and no login form; Loki has authentication disabled; Tempo accepts unauthenticated OTLP. The whole stack is localhost-only by design and should never be exposed to untrusted networks without authentication and encryption layers.
+Grafana runs with anonymous Admin access and no login form; Loki has authentication disabled; Tempo accepts unauthenticated OTLP; Pyroscope has authentication disabled. The whole stack is localhost-only by design and should never be exposed to untrusted networks without authentication and encryption layers.
 
 Do not commit credentials to source control or embed them in Docker image layers.
 

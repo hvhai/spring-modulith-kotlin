@@ -14,8 +14,8 @@ A Spring Modulith Kotlin application for demonstrating a modular monolith with T
 | `doc/` | Product/flow documentation and images |
 | `gradle/` | Gradle wrapper files |
 | `build.gradle.kts` | Build plugins, dependencies, and test configuration |
-| `docker-compose.yml` | MySQL and the Grafana LGTM observability stack |
-| `docker/observability/` | Prometheus, Tempo, and Grafana datasource provisioning |
+| `docker-compose.yml` | MySQL and the Grafana LGTM observability stack with Pyroscope profiling |
+| `docker/observability/` | Prometheus, Tempo, Loki, Pyroscope, and Grafana datasource provisioning |
 | `Dockerfile` | Multi-stage container build |
 
 ## Application entry point and shared configuration
@@ -37,7 +37,7 @@ The `src/main/resources/logback-spring.xml` includes Spring Boot's logging defau
 
 ## Dependencies
 
-Production dependencies cover MVC, Thymeleaf, OAuth2 client/resource server, Security, Spring Modulith Core/JPA/Insight, JPA, MySQL, H2, Flyway, Actuator, Micrometer tracing with the OpenTelemetry bridge and OTLP exporter, Micrometer Prometheus registry, loki4j Logback appender, Springdoc, CommonMark, and Apache HttpClient.
+Production dependencies cover MVC, Thymeleaf, OAuth2 client/resource server, Security, Spring Modulith Core/JPA/Insight, JPA, MySQL, H2, Flyway, Actuator, Micrometer tracing with the OpenTelemetry bridge and OTLP exporter, Micrometer Prometheus registry, loki4j Logback appender, Springdoc, CommonMark, and Apache HttpClient. The Dockerfile attaches the Pyroscope Java agent (version 2.1.2) for continuous profiling in containerized deployments.
 
 Test dependencies include Spring Boot Test, Kotlin/JUnit 5, MockK, Mockito Kotlin, Spring Security Test, Spring Modulith Test, WireMock, and Testcontainers with MySQL.
 

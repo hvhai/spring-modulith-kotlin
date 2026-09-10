@@ -4,11 +4,13 @@
 
 - Spring Boot/Kotlin modular-monolith foundation exists.
 - Todo and fruit-ordering API groups are configured.
-- OAuth2/JWT security, JPA/Flyway persistence, OpenAPI, Actuator, and Grafana LGTM observability (Prometheus metrics, Tempo traces, Loki logs) are integrated.
+- OAuth2/JWT security, JPA/Flyway persistence, OpenAPI, Actuator, and Grafana LGTM observability (Prometheus metrics, Tempo traces, Loki logs, Pyroscope profiles) are integrated.
+- Continuous profiling via Pyroscope (2.1.2) Java agent is enabled in containerized deployments.
 - Docker build and Docker Compose support are present.
 
 ## Near-term priorities
 
+- Wire the Pyroscope `-javaagent` into `bootRun` Gradle task for Linux/macOS hosts so app-on-host mode can also profile.
 - Document the concrete module/package map and public contracts.
 - Make test database provisioning deterministic for local and CI runs.
 - Add/maintain tests for API behavior, authorization rules, persistence, and module boundaries.

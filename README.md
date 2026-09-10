@@ -9,7 +9,7 @@ Spring Boot application written in Kotlin and organized with Spring Modulith. Th
 - Spring Modulith 1.3.1
 - Spring MVC, Thymeleaf, Spring Security OAuth2/Auth0
 - Spring Data JPA, Flyway, H2 and MySQL
-- OpenAPI/Swagger UI, Actuator, and Grafana LGTM observability (Prometheus, Tempo, Loki)
+- OpenAPI/Swagger UI, Actuator, and Grafana LGTM observability (Prometheus, Tempo, Loki, Pyroscope)
 - Gradle 8.11.1 (wrapper)
 
 ## Prerequisites
@@ -54,16 +54,19 @@ docker compose up -d
 | Prometheus | http://localhost:9090 | metrics, scrapes `/actuator/prometheus` |
 | Tempo | http://localhost:3200 | traces, OTLP on 4317/4318 |
 | Loki | http://localhost:3100 | logs |
+| Pyroscope | http://localhost:4040 | continuous CPU/JFR profiling |
 
 ### Run modes
 
 - **App on the host** — `docker compose up -d` for infrastructure, then
   `./gradlew bootRun --args='--spring.profiles.active=local'`.
   The `local` profile enables tracing and the Loki log appender.
+  **Note:** Continuous profiling works on Linux/macOS hosts only; on Windows, use containerized mode.
 - **Everything containerized** — `docker compose -f docker-compose-full.yml up`.
+  Profiling is fully functional in this mode on all platforms.
 
 The two modes publish the same host ports, so stop one before starting the other.
-See [`docs/deployment-guide.md`](docs/deployment-guide.md) for trace/log correlation.
+See [`docs/deployment-guide.md`](docs/deployment-guide.md) for trace/log correlation and profiling details.
 
 ## Docker image
 
