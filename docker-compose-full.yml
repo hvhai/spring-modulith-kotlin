@@ -19,6 +19,8 @@ services:
       - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://tempo:4318/v1/traces
       - MANAGEMENT_OTLP_TRACING_TRANSPORT=http
       - LOKI_URL=http://loki:3100
+      - PYROSCOPE_AGENT_ENABLED=true
+      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
     deploy:
       resources:
         limits:
@@ -30,6 +32,7 @@ services:
     depends_on:
       - tempo
       - loki
+      - pyroscope
     networks:
       - spring-modulith-kotlin-network
 
@@ -68,6 +71,14 @@ services:
     networks:
       - spring-modulith-kotlin-network
 
+  pyroscope:
+    image: grafana/pyroscope:2.3.1
+    platform: linux/amd64
+    ports:
+      - "4040:4040"
+    networks:
+      - spring-modulith-kotlin-network
+
   grafana:
     image: grafana/grafana:13.2.1
     platform: linux/amd64
@@ -83,6 +94,7 @@ services:
       - prometheus
       - tempo
       - loki
+      - pyroscope
     networks:
       - spring-modulith-kotlin-network
 networks:

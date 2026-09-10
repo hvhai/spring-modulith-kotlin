@@ -48,6 +48,14 @@ services:
     networks:
       - spring-modulith-kotlin-network
 
+  pyroscope:
+    image: grafana/pyroscope:2.3.1
+    platform: linux/amd64
+    ports:
+      - "4040:4040"
+    networks:
+      - spring-modulith-kotlin-network
+
   grafana:
     image: grafana/grafana:13.2.1
     platform: linux/amd64
@@ -63,6 +71,7 @@ services:
       - prometheus
       - tempo
       - loki
+      - pyroscope
     networks:
       - spring-modulith-kotlin-network
 networks:

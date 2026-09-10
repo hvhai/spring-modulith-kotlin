@@ -43,3 +43,10 @@ datasources:
           url: '$${__value.raw}'
           urlDisplayLabel: 'View Trace'
           datasourceUid: tempo
+
+  - name: Pyroscope
+    type: grafana-pyroscope-datasource
+    uid: pyroscope
+    access: proxy
+    url: http://pyroscope:4040
+    editable: false
