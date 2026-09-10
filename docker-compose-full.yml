@@ -13,9 +13,12 @@ services:
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_SECRET=${CLIENT_SECRET}
       - DOMAIN=${DOMAIN}
+      - SPRING_PROFILES_ACTIVE=docker
       - MANAGEMENT_TRACING_SAMPLING_PROBABILITY=1.0
       - MANAGEMENT_TRACING_ENABLED=true
-      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-all-in-one:9411/api/v2/spans
+      - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://tempo:4318/v1/traces
+      - MANAGEMENT_OTLP_TRACING_TRANSPORT=http
+      - LOKI_URL=http://loki:3100
     deploy:
       resources:
         limits:
@@ -25,15 +28,61 @@ services:
           cpus: 0.5
           memory: 256M
     depends_on:
-      - zipkin-all-in-one
+      - tempo
+      - loki
     networks:
       - spring-modulith-kotlin-network
-  zipkin-all-in-one:
-    image: openzipkin/zipkin
+
+  loki:
+    image: grafana/loki:3.7.7
     platform: linux/amd64
-    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
     ports:
-      - 9411:9411
+      - "3100:3100"
+    networks:
+      - spring-modulith-kotlin-network
+
+  tempo:
+    image: grafana/tempo:3.0.3
+    platform: linux/amd64
+    command: [ "-target=all", "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/observability/tempo.yaml:/etc/tempo.yaml:ro
+    ports:
+      - "3200:3200"   # tempo API/UI
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    networks:
+      - spring-modulith-kotlin-network
+
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    platform: linux/amd64
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    volumes:
+      - ./docker/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - spring-modulith-kotlin-network
+
+  grafana:
+    image: grafana/grafana:13.2.1
+    platform: linux/amd64
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - ./docker/observability/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
     networks:
       - spring-modulith-kotlin-network
 networks:
