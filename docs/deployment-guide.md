@@ -15,6 +15,8 @@ docker compose up -d
 
 This starts MySQL on host port `3326`, Prometheus on `9090`, Tempo on `3200`, Loki on `3100`, Pyroscope on `4040`, and Grafana on `3000`. Supply `MYSQL_ROOT_PASSWORD` in the environment before starting Compose.
 
+Grafana automatically provisions the `Spring Boot Observability` dashboard in both Compose modes. Fresh anonymous sessions default to the light theme; an existing browser session may retain its saved theme preference.
+
 ## Build and run with Gradle
 
 ```shell
