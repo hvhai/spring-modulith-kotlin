@@ -8,7 +8,7 @@ services:
     #    volumes:
     #      - ./data.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "3316:3306"
+      - "3326:3306"
     command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
     networks:
       - spring-modulith-kotlin-network
