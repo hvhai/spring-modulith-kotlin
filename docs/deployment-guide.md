@@ -13,7 +13,7 @@
 docker compose up -d
 ```
 
-This starts MySQL on host port `3316`, Prometheus on `9090`, Tempo on `3200`, Loki on `3100`, Pyroscope on `4040`, and Grafana on `3000`. Supply `MYSQL_ROOT_PASSWORD` in the environment before starting Compose.
+This starts MySQL on host port `3326`, Prometheus on `9090`, Tempo on `3200`, Loki on `3100`, Pyroscope on `4040`, and Grafana on `3000`. Supply `MYSQL_ROOT_PASSWORD` in the environment before starting Compose.
 
 ## Build and run with Gradle
 

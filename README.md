@@ -49,7 +49,7 @@ docker compose up -d
 
 | Service | URL | Purpose |
 |---|---|---|
-| MySQL | `localhost:3316` | database |
+| MySQL | `localhost:3326` | database |
 | Grafana | http://localhost:3000 | single observability UI (anonymous access) |
 | Prometheus | http://localhost:9090 | metrics, scrapes `/actuator/prometheus` |
 | Tempo | http://localhost:3200 | traces, OTLP on 4317/4318 |
