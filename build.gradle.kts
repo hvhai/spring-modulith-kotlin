@@ -53,7 +53,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.modulith:spring-modulith-starter-insight")
 	implementation("io.micrometer:micrometer-tracing-bridge-otel")
-	implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
+	implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+	implementation("io.micrometer:micrometer-registry-prometheus")
+	implementation("com.github.loki4j:loki-logback-appender:2.1.0")
 
 	// swagger
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
