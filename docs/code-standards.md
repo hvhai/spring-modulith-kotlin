@@ -2,24 +2,21 @@
 
 ## Language and build
 
-- Use Kotlin 1.9.25 and Java 21.
-- Use the Gradle Kotlin DSL in `build.gradle.kts`.
-- Run tests on the JUnit Platform.
+- Treat [`build.gradle.kts`](../build.gradle.kts) and the [Gradle wrapper properties](../gradle/wrapper/gradle-wrapper.properties) as the authority for language, framework, dependency, and build-tool versions.
 - Prefer the repository Gradle wrapper over a system Gradle installation.
 
 ## Package and module organization
 
 - Keep feature code under the application base package `com.codehunter.spring_modulith_kotlin`.
 - Organize business capabilities as Spring Modulith application modules.
-- Keep module internals package-private by convention where possible; expose only required application interfaces.
-- Keep shared infrastructure configuration separate from business modules.
+- Put module implementation details under an `internal` package and expose only required application interfaces from the module package.
 
 ## Kotlin conventions
 
 - Prefer immutable values (`val`) and constructor injection.
 - Use Kotlin null-safety rather than unchecked nullable access.
 - Use data classes for transport models/value-like structures where appropriate.
-- Follow Spring/Kotlin conventions for JPA entities and use the configured `allOpen` plugin annotations.
+- Follow the JPA openness configuration owned by [`build.gradle.kts`](../build.gradle.kts).
 - Keep configuration properties externalized through Spring configuration/environment variables.
 
 ## Security and configuration
@@ -37,10 +34,10 @@
 
 ## Testing
 
-- Name tests after the behavior or component under test.
-- Cover successful and failure paths, security rules, persistence behavior, and module boundaries.
-- Use MockK/Mockito only at true external boundaries; prefer realistic Spring integration tests for wiring.
-- Keep integration tests isolated and document Docker/Testcontainers prerequisites.
+- Use the lowest reliable test layer for the application-owned behavior.
+- Cover relevant success, failure, security, persistence, and module-boundary behavior without duplicating framework guarantees.
+- Use test doubles at true external boundaries; use Spring integration tests when wiring or persistence is the contract.
+- Keep integration-test data and infrastructure isolated. Tests that extend [`AppIntegrationBase`](../src/test/kotlin/com/codehunter/spring_modulith_kotlin/AppIntegrationBase.kt) require a working Docker environment for MySQL Testcontainers.
 
 ## Validation commands
 

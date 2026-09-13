@@ -9,7 +9,7 @@
 1. Keep business capabilities isolated as application modules.
 2. Provide authenticated REST endpoints and an OAuth2 login flow.
 3. Persist data through JPA and version schema changes with Flyway.
-4. Make local development observable with Actuator metrics, OTLP traces, and centralized logs through a Grafana LGTM stack.
+4. Make local development observable with Actuator metrics, OTLP traces, centralized logs, and continuous profiling through Grafana.
 5. Support H2-based application development and MySQL/container-based environments.
 
 ## Functional requirements
@@ -31,7 +31,7 @@
 ## Constraints and assumptions
 
 - Auth0/OIDC configuration is environment-specific.
-- MySQL and the observability stack (Prometheus, Tempo, Loki, Grafana) are supplied by Docker Compose.
+- MySQL and the observability stack (Prometheus, Tempo, Loki, Pyroscope, Grafana) are supplied by Docker Compose.
 - Some integration tests may require Docker/Testcontainers.
 
 ## Success criteria

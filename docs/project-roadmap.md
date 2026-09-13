@@ -11,7 +11,7 @@
 ## Near-term priorities
 
 - Wire the Pyroscope `-javaagent` into the `bootRun` Gradle task so app-on-host mode can profile without a manual
-  flag, defaulting to `PYROSCOPE_PROFILER_TYPE=JFR` on Windows where async-profiler has no native library.
+  JVM launch, defaulting to `PYROSCOPE_PROFILER_TYPE=JFR` on Windows where async-profiler has no native library.
 - Document the concrete module/package map and public contracts.
 - Make test database provisioning deterministic for local and CI runs.
 - Add/maintain tests for API behavior, authorization rules, persistence, and module boundaries.

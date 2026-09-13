@@ -17,6 +17,8 @@ Spring Boot application written in Kotlin and organized with Spring Modulith. Th
 - JDK 21
 - Docker Desktop for MySQL, the observability stack, or Testcontainers-based tests
 
+Use [`.env.example`](.env.example) as a starter template. Docker Compose loads a copied `.env` file automatically; direct Gradle or JVM runs need the required values exported in the shell.
+
 ## Run locally
 
 ```shell
@@ -29,7 +31,7 @@ On Windows:
 .\gradlew.bat bootRun
 ```
 
-The application listens on `http://localhost:8080`. OAuth2 client settings use `CLIENT_ID` and `CLIENT_SECRET`; configure these when exercising authenticated browser flows.
+The application listens on `http://localhost:8080`.
 
 ## Tests
 
@@ -60,12 +62,11 @@ docker compose up -d
 
 - **App on the host** — `docker compose up -d` for infrastructure, then
   `./gradlew bootRun --args='--spring.profiles.active=local'`.
-  The `local` profile enables tracing and the Loki log appender.
-  **Note:** the default `ASYNC` profiler uses async-profiler, which has no Windows native library.
-  To profile the app running on a Windows host, set `PYROSCOPE_PROFILER_TYPE=JFR`, which samples
-  through JDK Flight Recorder instead. Containers are unaffected and keep the `ASYNC` default.
+  The `local` profile enables tracing and the Loki log appender. `bootRun` does not attach the
+  Pyroscope agent; follow the [deployment guide](docs/deployment-guide.md#continuous-profiling)
+  when host profiling is needed. Windows host profiling must use the `JFR` profiler type.
 - **Everything containerized** — `docker compose -f docker-compose-full.yml up`.
-  Profiling is fully functional in this mode on all platforms.
+  The image attaches the profiling agent and Compose enables it.
 
 The two modes publish the same host ports, so stop one before starting the other.
 See [`docs/deployment-guide.md`](docs/deployment-guide.md) for trace/log correlation and profiling details.
@@ -74,7 +75,14 @@ See [`docs/deployment-guide.md`](docs/deployment-guide.md) for trace/log correla
 
 ```shell
 docker build . --tag spring-modulith-kotlin:latest --platform=linux/amd64
-docker run --rm -p 8080:8080 spring-modulith-kotlin:latest
+docker run --rm --env-file .env -p 8080:8080 spring-modulith-kotlin:latest
 ```
 
-See [`docs/`](docs/) for architecture, development standards, deployment notes, and the roadmap.
+Project documentation:
+
+- [Project intent and requirements](docs/project-overview-pdr.md)
+- [Architecture and boundaries](docs/system-architecture.md)
+- [Codebase navigation](docs/codebase-summary.md)
+- [Development standards](docs/code-standards.md)
+- [Deployment and observability](docs/deployment-guide.md)
+- [Open roadmap](docs/project-roadmap.md)

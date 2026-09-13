@@ -1,53 +1,19 @@
-# Codebase Summary
+# Codebase Navigation
 
-## Repository purpose
+This repository demonstrates a Spring Modulith modular monolith with Todo, note, event-sourcing, and fruit-ordering capabilities. Product intent and constraints live in the [project overview](project-overview-pdr.md); this page points to executable owners.
 
-A Spring Modulith Kotlin application for demonstrating a modular monolith with Todo and fruit-ordering capabilities.
-
-## Top-level structure
-
-| Path | Purpose |
+| Concern | Executable owner |
 |---|---|
-| `src/main/kotlin/` | Kotlin application and feature modules |
-| `src/main/resources/` | Application configuration, templates, static files, and database migrations |
-| `src/test/` | JUnit 5 unit, integration, security, and module tests |
-| `doc/` | Product/flow documentation and images |
-| `gradle/` | Gradle wrapper files |
-| `build.gradle.kts` | Build plugins, dependencies, and test configuration |
-| `docker-compose.yml` | MySQL and the Grafana LGTM observability stack with Pyroscope profiling |
-| `docker/observability/` | Prometheus, Tempo, Loki, Pyroscope, and Grafana datasource provisioning |
-| `Dockerfile` | Multi-stage container build |
+| Application bootstrap, security, OpenAPI, CORS, and request JFR events | [`SpringModulithKotlinApplication.kt`](../src/main/kotlin/com/codehunter/spring_modulith_kotlin/SpringModulithKotlinApplication.kt) |
+| Business modules and their public entry points | [`src/main/kotlin/com/codehunter/spring_modulith_kotlin/`](../src/main/kotlin/com/codehunter/spring_modulith_kotlin/) |
+| Fruit-ordering business flow | [`doc/fruits-ordering-flow.png`](../doc/fruits-ordering-flow.png) |
+| Runtime configuration and Spring profiles | [`src/main/resources/`](../src/main/resources/) |
+| Database schemas | [H2 migrations](../src/main/resources/db/migration-h2/) and [MySQL migrations](../src/main/resources/db/migration/) |
+| Dependencies, toolchain, and test task | [`build.gradle.kts`](../build.gradle.kts) and the [Gradle wrapper](../gradle/wrapper/gradle-wrapper.properties) |
+| Unit, integration, security, and module-boundary tests | [`src/test/`](../src/test/) |
+| Container image and run modes | [`Dockerfile`](../Dockerfile), [`docker-compose.yml`](../docker-compose.yml), and [`docker-compose-full.yml`](../docker-compose-full.yml) |
+| Metrics, tracing, and Grafana datasource configuration | [`docker/observability/`](../docker/observability/) |
+| Loki shipping | [`logback-spring.xml`](../src/main/resources/logback-spring.xml) |
+| CI build and image publication | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) |
 
-## Application entry point and shared configuration
-
-The main application class is in package `com.codehunter.spring_modulith_kotlin`. It enables Spring Boot and configures:
-
-- Two Spring Security filter chains: API bearer JWT security and MVC OAuth2 login.
-- CORS and request tracing through a servlet interceptor.
-- OpenAPI bearer authentication metadata and grouped API documentation.
-- Actuator/tracing-related runtime configuration.
-
-The `src/main/resources/logback-spring.xml` includes Spring Boot's logging defaults and gates the Loki log appender on the `local` and `docker` Spring profiles. Under other profiles (default, integration), logging remains console-only and does not require a running Loki instance.
-
-## Feature areas
-
-- **Todo:** documented by the OpenAPI group `todo-kotlin`.
-- **Fruit ordering:** documented by the OpenAPI group `fruit-ordering`; the business flow is illustrated in `doc/fruits-ordering-flow.png`.
-- **Persistence:** Spring Data JPA with Flyway migrations, H2 by default and MySQL/container support.
-
-## Dependencies
-
-Production dependencies cover MVC, Thymeleaf, OAuth2 client/resource server, Security, Spring Modulith Core/JPA/Insight, JPA, MySQL, H2, Flyway, Actuator, Micrometer tracing with the OpenTelemetry bridge and OTLP exporter, Micrometer Prometheus registry, loki4j Logback appender, Springdoc, CommonMark, and Apache HttpClient. The Dockerfile attaches the Pyroscope Java agent (version 2.1.2) for continuous profiling in containerized deployments.
-
-Test dependencies include Spring Boot Test, Kotlin/JUnit 5, MockK, Mockito Kotlin, Spring Security Test, Spring Modulith Test, WireMock, and Testcontainers with MySQL.
-
-## Build and test behavior
-
-The Gradle `Test` task uses JUnit Platform and logs passed, skipped, and failed tests with full exception details. It also prints a final test summary and failed test names.
-
-## Known configuration considerations
-
-- OAuth2 client values use `CLIENT_ID` and `CLIENT_SECRET`.
-- The default application configuration uses an in-memory H2 database and H2 Flyway migrations.
-- Test configuration switches to MySQL-oriented settings; integration tests may therefore need Docker or test-specific dynamic database configuration.
-- The Dockerfile intentionally builds with `-x test`; run tests separately before producing an image.
+The [deployment guide](deployment-guide.md) owns the operating workflow and local-only security constraints. The [completed observability plan](../plans/20260910-1340-replace-zipkin-with-grafana-lgtm-stack/plan.md) retains migration decisions and verification evidence.

@@ -17,18 +17,22 @@ This starts MySQL on host port `3326`, Prometheus on `9090`, Tempo on `3200`, Lo
 
 Grafana automatically provisions the `Spring Boot Observability` dashboard in both Compose modes. Fresh anonymous sessions default to the light theme; an existing browser session may retain its saved theme preference.
 
+Use [`.env.example`](../.env.example) as a starter template. Copy it to `.env` and replace placeholder values before using Compose. Direct Gradle and JVM runs do not load `.env`; export the required values in the shell.
+
 ## Build and run with Gradle
 
 ```shell
 ./gradlew clean build
-./gradlew bootRun
+./gradlew bootRun --args='--spring.profiles.active=local'
 ```
+
+The `local` profile connects the host application to MySQL, Tempo, and Loki from `docker-compose.yml`. The default profile uses in-memory H2 and leaves tracing disabled.
 
 ## Build and run with Docker
 
 ```shell
 docker build . --tag spring-modulith-kotlin:latest --platform=linux/amd64
-docker run --rm -p 8080:8080 spring-modulith-kotlin:latest
+docker run --rm --env-file .env -p 8080:8080 spring-modulith-kotlin:latest
 ```
 
 The image exposes port 8080 and starts the packaged Spring Boot JAR. The Dockerfile skips tests during image construction, so run `./gradlew clean check` as a separate release gate.
@@ -39,14 +43,7 @@ The build stage (`gradle:8.11-jdk21-alpine`, musl) and the runtime stage (glibc)
 
 ## Configuration
 
-Relevant environment variables include:
-
-- `CLIENT_ID`
-- `CLIENT_SECRET`
-- `APP_H2_PASS`
-- `APP_METHOD_API_TOKEN`
-- `DOMAIN`
-- `MYSQL_ROOT_PASSWORD` for Compose
+Start from [`.env.example`](../.env.example). Spring defaults and the `local` overrides live in [`application.properties`](../src/main/resources/application.properties) and [`application-local.properties`](../src/main/resources/application-local.properties). Container-specific values and overrides live in [`docker-compose-full.yml`](../docker-compose-full.yml).
 
 Never place real credentials in source control or image layers.
 
@@ -81,9 +78,26 @@ To view logs and find the associated trace:
 
 ## Continuous profiling
 
-Profiling via Pyroscope collects CPU and Java Flight Recorder (JFR) data from the running application. The Pyroscope Java agent is always attached by the Dockerfile's `-javaagent` flag, but profiling is disabled by default (`PYROSCOPE_AGENT_ENABLED=false`) so that running the container standalone emits no errors.
+Profiling via Pyroscope collects CPU and Java Flight Recorder (JFR) data from the running application. The container image attaches the agent, keeps it disabled by default, and `docker-compose-full.yml` enables it and supplies the Pyroscope address.
 
-Profiling is enabled automatically in `docker-compose-full.yml` (containerized mode) and gated everywhere else by `PYROSCOPE_AGENT_ENABLED`, which defaults to false in the image so a standalone `docker run` emits no connection errors.
+The Gradle `bootRun` task does not attach the agent. For host profiling, build the executable jar and launch it with the checked-in agent after exporting `SPRING_PROFILES_ACTIVE=local`, `PYROSCOPE_AGENT_ENABLED=true`, `PYROSCOPE_APPLICATION_NAME=spring-modulith-kotlin`, and `PYROSCOPE_SERVER_ADDRESS=http://localhost:4040`:
+
+```shell
+./gradlew bootJar
+java -javaagent:libs/agent-pyroscope-2.1.2.jar -jar build/libs/spring-modulith-kotlin-0.0.1-SNAPSHOT.jar
+```
+
+On Windows, use `JFR` because the default `ASYNC` profiler has no Windows native library:
+
+```powershell
+$env:SPRING_PROFILES_ACTIVE = "local"
+$env:PYROSCOPE_AGENT_ENABLED = "true"
+$env:PYROSCOPE_APPLICATION_NAME = "spring-modulith-kotlin"
+$env:PYROSCOPE_SERVER_ADDRESS = "http://localhost:4040"
+$env:PYROSCOPE_PROFILER_TYPE = "JFR"
+.\gradlew.bat bootJar
+java -javaagent:libs/agent-pyroscope-2.1.2.jar -jar build/libs/spring-modulith-kotlin-0.0.1-SNAPSHOT.jar
+```
 
 The agent offers two profiler types, selected with `PYROSCOPE_PROFILER_TYPE`:
 
@@ -92,7 +106,7 @@ The agent offers two profiler types, selected with `PYROSCOPE_PROFILER_TYPE`:
 
 WSL is a Linux environment and is not subject to the `ASYNC` limitation.
 
-When attaching the agent to a host JVM, prefer a targeted flag over `JAVA_TOOL_OPTIONS`: the latter applies to every JVM the command starts, so the Gradle daemon gets profiled alongside the application.
+Attach the agent to the application JVM as shown above. `JAVA_TOOL_OPTIONS` applies to every JVM launched from that shell, including Gradle daemons.
 
 To view profiles in Grafana:
 
