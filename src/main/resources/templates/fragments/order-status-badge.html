@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- Bootstrap badge colored by fruit-ordering OrderStatus -->
+<span th:fragment="statusBadge(status)" class="badge"
+      th:classappend="${status.name() == 'DONE'} ? 'badge-success'
+                     : (${status.name() == 'CANCELED' or status.name() == 'CANCELING'} ? 'badge-danger'
+                     : (${status.name() == 'WAITING_FOR_PURCHASE'} ? 'badge-warning' : 'badge-secondary'))"
+      th:text="${status}">STATUS</span>
+</html>

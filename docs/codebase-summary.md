@@ -6,6 +6,7 @@ This repository demonstrates a Spring Modulith modular monolith with Todo, note,
 |---|---|
 | Application bootstrap, security, OpenAPI, CORS, and request JFR events | [`SpringModulithKotlinApplication.kt`](../src/main/kotlin/com/codehunter/spring_modulith_kotlin/SpringModulithKotlinApplication.kt) |
 | Business modules and their public entry points | [`src/main/kotlin/com/codehunter/spring_modulith_kotlin/`](../src/main/kotlin/com/codehunter/spring_modulith_kotlin/) |
+| Server-rendered pages, including the Fruit Ordering UI | [`ui/`](../src/main/kotlin/com/codehunter/spring_modulith_kotlin/ui/) and [`templates/`](../src/main/resources/templates/) |
 | Fruit-ordering business flow | [`doc/fruits-ordering-flow.png`](../doc/fruits-ordering-flow.png) |
 | Runtime configuration and Spring profiles | [`src/main/resources/`](../src/main/resources/) |
 | Database schemas | [H2 migrations](../src/main/resources/db/migration-h2/) and [MySQL migrations](../src/main/resources/db/migration/) |

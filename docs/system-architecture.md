@@ -18,6 +18,7 @@ The system is a **modular monolith**: one deployable Spring Boot process contain
 - `/api/**` is matched by the JWT resource-server filter chain.
 - Public documentation, root, actuator, and H2-console paths are explicitly permitted by configuration.
 - Other MVC routes use OAuth2 login.
+- The Fruit Ordering pages (`/fruit-ordering/**`) belong to the `ui` module and call the fruit-ordering module services directly with the OAuth2-login session; they do not call the JWT-protected `/api/fruit-ordering/**` endpoints.
 - CSRF is disabled in the configured HTTP chains because this application exposes API-style endpoints and OAuth2-protected routes; review this decision before production hardening.
 
 ## API documentation groups
