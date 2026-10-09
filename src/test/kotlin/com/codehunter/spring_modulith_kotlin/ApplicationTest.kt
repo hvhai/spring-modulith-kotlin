@@ -15,7 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 )
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
 @ActiveProfiles("integration")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@DirtiesContext
 @Import(TestSecurityConfiguration::class)
 class ApplicationTest : IntegrationBaseTest() {
 

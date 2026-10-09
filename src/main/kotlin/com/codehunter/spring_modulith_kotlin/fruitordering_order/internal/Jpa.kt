@@ -5,9 +5,11 @@ import jakarta.persistence.*
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.AbstractAggregateRoot
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.math.BigDecimal
 import java.time.Instant
+import java.util.*
 
 @Entity
 @Table(name = "fruit_order_product")
@@ -167,4 +169,15 @@ interface OrderPaymentRepository : JpaRepository<JpaOrderPayment, String>
 interface OrderProductRepository : JpaRepository<JpaOrderProduct, String>
 
 @Repository
-interface OrderRepository : JpaRepository<JpaOrder, String>
+interface OrderRepository : JpaRepository<JpaOrder, String> {
+
+
+    @Query(
+        """
+        SELECT o FROM JpaOrder o
+        LEFT JOIN FETCH o.products p
+        WHERE o.id = :id
+    """
+    )
+    fun findByIdWithProducts(id: String): Optional<JpaOrder>;
+}

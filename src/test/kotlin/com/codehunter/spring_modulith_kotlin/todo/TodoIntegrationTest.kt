@@ -35,7 +35,7 @@ import kotlin.test.assertNull
     classes = arrayOf(SpringModulithKotlinApplication::class),
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@DirtiesContext
 @ContextConfiguration(initializers = arrayOf(WiremockInitializer::class))
 @ActiveProfiles("integration")
 class TodoIntegrationTest : IntegrationBaseTest() {
