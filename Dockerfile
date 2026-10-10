@@ -1,4 +1,4 @@
-FROM gradle:8.11-jdk21-alpine AS build
+FROM gradle:8.14-jdk21-alpine AS build
 WORKDIR /code
 
 # Continuous-profiling agent, fetched before the source copy so it stays cached
