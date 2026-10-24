@@ -7,7 +7,7 @@ The system is a **modular monolith**: one deployable Spring Boot process contain
 ## Runtime layers
 
 1. **HTTP/UI layer** — Spring MVC controllers, Thymeleaf templates, static resources, Swagger UI.
-2. **Security layer** — API JWT resource-server chain and MVC OAuth2-login chain.
+2. **Security layer** — API JWT resource-server chain, Fruit Ordering HTTP Basic chain, and MVC OAuth2-login chain.
 3. **Application modules** — Todo and fruit-ordering business capabilities.
 4. **Persistence layer** — Spring Data JPA repositories and entities.
 5. **Database migration layer** — Flyway migrations for H2/MySQL environments.
@@ -17,8 +17,9 @@ The system is a **modular monolith**: one deployable Spring Boot process contain
 
 - `/api/**` is matched by the JWT resource-server filter chain.
 - Public documentation, root, actuator, and H2-console paths are explicitly permitted by configuration.
+- `/fruit-ordering/**` is matched by a dedicated stateless HTTP Basic chain (`FruitOrderingBasicAuthConfiguration`, order 1) with a single in-memory user from `fruit-ordering.basic-auth.username/password`; unauthenticated requests get `401` with `WWW-Authenticate: Basic`.
 - Other MVC routes use OAuth2 login.
-- The Fruit Ordering pages (`/fruit-ordering/**`) belong to the `ui` module and call the fruit-ordering module services directly with the OAuth2-login session; they do not call the JWT-protected `/api/fruit-ordering/**` endpoints.
+- The Fruit Ordering pages belong to the `ui` module and call the fruit-ordering module services directly, authenticated by HTTP Basic (orders are keyed by the Basic username); they do not call the JWT-protected `/api/fruit-ordering/**` endpoints.
 - CSRF is disabled in the configured HTTP chains because this application exposes API-style endpoints and OAuth2-protected routes; review this decision before production hardening.
 
 ## API documentation groups

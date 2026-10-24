@@ -9,8 +9,7 @@ import com.codehunter.spring_modulith_kotlin.share.OrderDTO
 import com.codehunter.spring_modulith_kotlin.share.OrderStatus
 import com.codehunter.spring_modulith_kotlin.share.UserDTO
 import org.slf4j.LoggerFactory
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.oauth2.core.oidc.user.OidcUser
+import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,8 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 /**
  * Server-rendered Fruit Ordering pages. Calls the public services of the fruit-ordering
- * modules directly instead of the JWT-protected `/api` endpoints, so the browser session
- * from OAuth2 login is enough.
+ * modules directly instead of the JWT-protected `/api` endpoints, authenticated with HTTP Basic.
  */
 @Controller
 @RequestMapping("/fruit-ordering")
@@ -47,11 +45,11 @@ class FruitOrderingUIController(
         )
     }
 
-    /** The navbar reads `profile` claims on every page when the user is authenticated. */
+    /** The navbar reads `profile` entries on every page when the user is authenticated. */
     @ModelAttribute
-    fun addProfile(model: Model, @AuthenticationPrincipal oidcUser: OidcUser?) {
-        if (oidcUser != null) {
-            model.addAttribute("profile", oidcUser.claims)
+    fun addProfile(model: Model, authentication: Authentication?) {
+        if (authentication != null) {
+            model.addAttribute("profile", mapOf("name" to authentication.name, "picture" to ""))
         }
     }
 
@@ -65,7 +63,7 @@ class FruitOrderingUIController(
     @PostMapping("/orders")
     fun createOrder(
         @RequestParam(required = false) productIds: List<String>?,
-        @AuthenticationPrincipal oidcUser: OidcUser,
+        authentication: Authentication,
         redirectAttributes: RedirectAttributes,
     ): String {
         val selectedIds = productIds.orEmpty().toSet()
@@ -81,7 +79,7 @@ class FruitOrderingUIController(
         }
 
         val request = CreateOrderRequestDTO(selectedIds.map { CreateOrderRequestDTO.ProductRequestDTO(it) })
-        val order = orderService.createOrder(request, userFrom(oidcUser))
+        val order = orderService.createOrder(request, userFrom(authentication))
         log.info("UI created order id={}", order.id)
         return "redirect:/fruit-ordering/orders/${order.id}"
     }
@@ -131,8 +129,8 @@ class FruitOrderingUIController(
         return "redirect:/fruit-ordering/orders/$id?purchasing=true"
     }
 
-    private fun userFrom(oidcUser: OidcUser) =
-        UserDTO(oidcUser.subject, oidcUser.preferredUsername ?: oidcUser.fullName)
+    private fun userFrom(authentication: Authentication) =
+        UserDTO(authentication.name, authentication.name)
 
     /** After purchase the status stays WAITING_FOR_PURCHASE until the PURCHASED event is consumed. */
     private fun shouldAutoRefresh(order: OrderDTO, purchasing: Boolean) =

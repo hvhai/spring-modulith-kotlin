@@ -114,7 +114,7 @@ class DirectlyConfiguredJwkSetUri {
 
     @Bean
     @Throws(java.lang.Exception::class)
-    @Order(1)
+    @Order(2)
     fun filterChainMvc(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests({

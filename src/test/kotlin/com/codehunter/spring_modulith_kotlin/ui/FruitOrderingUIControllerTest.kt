@@ -6,8 +6,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin
+import org.springframework.context.annotation.Import
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -25,7 +25,14 @@ import com.codehunter.spring_modulith_kotlin.fruitordering_order.CreateOrderRequ
 import java.math.BigDecimal
 import java.time.Instant
 
-@WebMvcTest(FruitOrderingUIController::class)
+@WebMvcTest(
+    FruitOrderingUIController::class,
+    properties = [
+        "fruit-ordering.basic-auth.username=alice",
+        "fruit-ordering.basic-auth.password=secret",
+    ],
+)
+@Import(FruitOrderingBasicAuthConfiguration::class)
 class FruitOrderingUIControllerTest(
     @Autowired val mockMvc: MockMvc
 ) {
@@ -38,8 +45,7 @@ class FruitOrderingUIControllerTest(
     @MockkBean
     lateinit var paymentService: PaymentService
 
-    private fun oidcLoginAlice() = oidcLogin()
-        .idToken { it.subject("user-1").claim("preferred_username", "alice") }
+    private fun basicAlice() = httpBasic("alice", "secret")
 
     // Case 1: GET /fruit-ordering -> 200, view fruit-ordering/index, contains product names + order id; navbar contains "Fruit Ordering"
     @Test
@@ -59,7 +65,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.get("/fruit-ordering") {
-            with(oidcLoginAlice())
+            with(basicAlice())
         }
             .andExpect { status { isOk() } }
             .andExpect { view { name("fruit-ordering/index") } }
@@ -75,8 +81,7 @@ class FruitOrderingUIControllerTest(
     fun `case2_post_order_with_no_products_redirects_with_error`() {
         // when & then
         mockMvc.post("/fruit-ordering/orders") {
-            with(oidcLoginAlice())
-            with(csrf())
+            with(basicAlice())
         }
             .andExpect { status { is3xxRedirection() } }
             .andExpect { redirectedUrl("/fruit-ordering") }
@@ -95,8 +100,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.post("/fruit-ordering/orders") {
-            with(oidcLoginAlice())
-            with(csrf())
+            with(basicAlice())
             param("productIds", "unknown-id")
         }
             .andExpect { status { is3xxRedirection() } }
@@ -107,7 +111,7 @@ class FruitOrderingUIControllerTest(
         verify(exactly = 0) { orderService.createOrder(any(), any()) }
     }
 
-    // Case 4: POST orders valid -> createOrder called with ids and UserDTO("user-1","alice"), 3xx to /fruit-ordering/orders/{id}
+    // Case 4: POST orders valid -> createOrder called with ids and UserDTO("alice","alice"), 3xx to /fruit-ordering/orders/{id}
     @Test
     fun `case4_post_order_with_valid_products_creates_order_and_redirects`() {
         // given
@@ -126,8 +130,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.post("/fruit-ordering/orders") {
-            with(oidcLoginAlice())
-            with(csrf())
+            with(basicAlice())
             param("productIds", productId)
         }
             .andExpect { status { is3xxRedirection() } }
@@ -137,7 +140,7 @@ class FruitOrderingUIControllerTest(
         verify(exactly = 1) {
             orderService.createOrder(
                 match { req -> req.products.size == 1 && req.products[0].id == productId },
-                UserDTO("user-1", "alice")
+                UserDTO("alice", "alice")
             )
         }
     }
@@ -158,7 +161,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.get("/fruit-ordering/orders/order-1") {
-            with(oidcLoginAlice())
+            with(basicAlice())
         }
             .andExpect { status { isOk() } }
             .andExpect { view { name("fruit-ordering/order-detail") } }
@@ -184,7 +187,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.get("/fruit-ordering/orders/order-1") {
-            with(oidcLoginAlice())
+            with(basicAlice())
         }
             .andExpect { status { isOk() } }
             .andExpect { view { name("fruit-ordering/order-detail") } }
@@ -210,7 +213,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.get("/fruit-ordering/orders/order-1?purchasing=true") {
-            with(oidcLoginAlice())
+            with(basicAlice())
         }
             .andExpect { status { isOk() } }
             .andExpect { view { name("fruit-ordering/order-detail") } }
@@ -236,7 +239,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.get("/fruit-ordering/orders/order-1") {
-            with(oidcLoginAlice())
+            with(basicAlice())
         }
             .andExpect { status { isOk() } }
             .andExpect { view { name("fruit-ordering/order-detail") } }
@@ -259,7 +262,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.get("/fruit-ordering/orders/order-1") {
-            with(oidcLoginAlice())
+            with(basicAlice())
         }
             .andExpect { status { isOk() } }
             .andExpect { view { name("fruit-ordering/order-detail") } }
@@ -286,8 +289,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.post("/fruit-ordering/orders/order-1/purchase") {
-            with(oidcLoginAlice())
-            with(csrf())
+            with(basicAlice())
         }
             .andExpect { status { is3xxRedirection() } }
             .andExpect { redirectedUrl("/fruit-ordering/orders/order-1?purchasing=true") }
@@ -312,8 +314,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.post("/fruit-ordering/orders/order-1/purchase") {
-            with(oidcLoginAlice())
-            with(csrf())
+            with(basicAlice())
         }
             .andExpect { status { is3xxRedirection() } }
             .andExpect { redirectedUrl("/fruit-ordering/orders/order-1") }
@@ -338,8 +339,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.post("/fruit-ordering/orders/order-1/purchase") {
-            with(oidcLoginAlice())
-            with(csrf())
+            with(basicAlice())
         }
             .andExpect { status { is3xxRedirection() } }
             .andExpect { redirectedUrl("/fruit-ordering/orders/order-1") }
@@ -357,22 +357,21 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.get("/fruit-ordering/orders/unknown-id") {
-            with(oidcLoginAlice())
+            with(basicAlice())
         }
             .andExpect { status { is3xxRedirection() } }
             .andExpect { redirectedUrl("/fruit-ordering") }
             .andExpect { flash { attribute("error", org.hamcrest.Matchers.containsString("Order not found")) } }
     }
 
-    // Case 12: Unauthenticated GET /fruit-ordering -> 3xx (login redirect)
+    // Case 12: browser-like unauthenticated request -> 401 Basic challenge (no Auth0 redirect)
     @Test
-    fun `case12_get_index_unauthenticated_redirects_to_login`() {
-        // when & then
-        // Browser-like request; without Accept text/html Spring Security answers 401 instead of redirecting
+    fun `case12_get_index_unauthenticated_returns_basic_challenge`() {
         mockMvc.get("/fruit-ordering") {
             accept = org.springframework.http.MediaType.TEXT_HTML
         }
-            .andExpect { status { is3xxRedirection() } }
+            .andExpect { status { isUnauthorized() } }
+            .andExpect { header { string("WWW-Authenticate", org.hamcrest.Matchers.startsWith("Basic")) } }
     }
 
     // Case 13: POST purchase at WAITING_FOR_PURCHASE when payment already purchased (repeated submit)
@@ -394,8 +393,7 @@ class FruitOrderingUIControllerTest(
 
         // when & then
         mockMvc.post("/fruit-ordering/orders/order-1/purchase") {
-            with(oidcLoginAlice())
-            with(csrf())
+            with(basicAlice())
         }
             .andExpect { status { is3xxRedirection() } }
             .andExpect { redirectedUrl("/fruit-ordering/orders/order-1?purchasing=true") }
@@ -403,5 +401,24 @@ class FruitOrderingUIControllerTest(
 
         // verify purchasePayment was called
         verify(exactly = 1) { paymentService.purchasePayment("pay-1") }
+    }
+
+    // Case: no credentials -> 401 with Basic challenge, service never touched
+    @Test
+    fun `get_index_without_credentials_returns_401`() {
+        mockMvc.get("/fruit-ordering")
+            .andExpect { status { isUnauthorized() } }
+            .andExpect { header { string("WWW-Authenticate", org.hamcrest.Matchers.startsWith("Basic")) } }
+        verify(exactly = 0) { warehouseService.allProduct() }
+    }
+
+    // Case: wrong password -> 401
+    @Test
+    fun `wrong_password_returns_401`() {
+        mockMvc.get("/fruit-ordering") {
+            with(httpBasic("alice", "wrong"))
+        }
+            .andExpect { status { isUnauthorized() } }
+        verify(exactly = 0) { warehouseService.allProduct() }
     }
 }
