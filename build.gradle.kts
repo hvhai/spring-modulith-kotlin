@@ -45,6 +45,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("com.mysql:mysql-connector-j")
 	runtimeOnly("com.h2database:h2")
+	runtimeOnly("org.springframework.boot:spring-boot-h2console")
 	implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:2.3.0")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("org.flywaydb:flyway-mysql")
@@ -52,6 +53,8 @@ dependencies {
 	// monitoring
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.modulith:spring-modulith-starter-insight")
+	implementation("org.springframework.boot:spring-boot-micrometer-tracing-opentelemetry")
+	implementation("org.springframework.boot:spring-boot-opentelemetry")
 	implementation("io.micrometer:micrometer-tracing-bridge-otel")
 	implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 	implementation("io.micrometer:micrometer-registry-prometheus")

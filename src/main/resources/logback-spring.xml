@@ -39,8 +39,10 @@
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <springProfile name="local,docker">
-            <appender-ref ref="LOKI"/>
-        </springProfile>
     </root>
+    <springProfile name="local,docker">
+        <root level="INFO">
+            <appender-ref ref="LOKI"/>
+        </root>
+    </springProfile>
 </configuration>
