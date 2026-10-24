@@ -24,7 +24,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
-import org.testcontainers.containers.MySQLContainer
+import org.testcontainers.mysql.MySQLContainer
 import org.testcontainers.utility.DockerImageName
 
 
@@ -33,7 +33,7 @@ class TestContainersConfiguration {
 
     @Bean
     @ServiceConnection
-    fun mysqlContainer(): MySQLContainer<*> {
+    fun mysqlContainer(): MySQLContainer {
         return MySQLContainer(DockerImageName.parse("mysql:latest"))
     }
 
@@ -43,7 +43,7 @@ class TestContainersConfiguration {
 class TestContainerConfig {
     @Bean
     @ServiceConnection
-    fun mySQLContainer(): MySQLContainer<*> {
+    fun mySQLContainer(): MySQLContainer {
         return MySQLContainer(DockerImageName.parse("mysql:8.0.33")).withReuse(false)
     }
 }

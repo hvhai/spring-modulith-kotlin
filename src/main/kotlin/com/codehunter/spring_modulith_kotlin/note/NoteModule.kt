@@ -105,7 +105,7 @@ class GhTreeItem(
     val mode: String,
     val type: String,
     val sha: String,
-    val size: Int,
+    val size: Int = 0,
     val url: String
 )
 

@@ -72,15 +72,19 @@ dependencies {
 
 	// testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("com.ninja-squad:springmockk:4.0.2")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+	testImplementation("org.springframework.boot:spring-boot-resttestclient")
+	testImplementation("org.springframework.boot:spring-boot-restclient")
+	testImplementation("com.ninja-squad:springmockk:5.0.1")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:6.4.0")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:mysql")
+	testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+	testImplementation("org.testcontainers:testcontainers-mysql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-	testImplementation("com.c4-soft.springaddons:spring-addons-oauth2-test:7.1.10")
 	testImplementation("org.springframework.security:spring-security-test")
 
 	testImplementation("org.wiremock:wiremock-standalone:3.10.0")

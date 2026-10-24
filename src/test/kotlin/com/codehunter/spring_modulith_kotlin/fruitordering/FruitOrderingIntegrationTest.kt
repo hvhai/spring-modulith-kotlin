@@ -1,6 +1,5 @@
 package com.codehunter.spring_modulith_kotlin.fruitordering
 
-import com.c4_soft.springaddons.security.oauth2.test.annotations.WithJwt
 import com.codehunter.spring_modulith_kotlin.IntegrationBaseTest
 import com.codehunter.spring_modulith_kotlin.TestContainerConfig
 import com.codehunter.spring_modulith_kotlin.TestSecurityConfiguration
@@ -17,12 +16,16 @@ import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.Wa
 import com.codehunter.spring_modulith_kotlin.share.OrderStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.modulith.test.EnableScenarios
 import org.springframework.modulith.test.Scenario
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -60,15 +63,21 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
     @Autowired
     lateinit var orderService: OrderService
 
+    @AfterEach
+    fun clearSecurityContext() {
+        SecurityContextHolder.clearContext()
+    }
+
+    private fun authenticateAsUser() {
+        val jwt = Jwt.withTokenValue("token")
+            .header("alg", "none")
+            .claim("sub", "user")
+            .claim("preferred_username", "user")
+            .build()
+        SecurityContextHolder.getContext().authentication = JwtAuthenticationToken(jwt)
+    }
+
     @Test
-    @WithJwt(
-        json = """
-            {
-              "sub": "user",
-              "preferred_username": "user"
-            }
-            """
-    )
     fun `when create new order`(scenario: Scenario) {
         // given
         // Stock: Apple: 10
@@ -84,7 +93,10 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
                 CreateOrderRequestDTO.ProductRequestDTO(appleProduct.id!!)
             )
         )
-        scenario.stimulate(Runnable { orderController.createOrder(createOrderRequestDTO) })
+        scenario.stimulate(Runnable {
+            authenticateAsUser()
+            orderController.createOrder(createOrderRequestDTO)
+        })
             .andWaitForEventOfType(PaymentEvent::class.java)
             .matching({ event: PaymentEvent ->
                 event.paymentEventType.equals(PaymentEvent.PaymentEventType.CREATED)

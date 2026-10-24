@@ -17,7 +17,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.test.annotation.DirtiesContext
@@ -31,6 +32,7 @@ import kotlin.test.assertNull
 
 
 @Testcontainers
+@AutoConfigureTestRestTemplate
 @SpringBootTest(
     classes = arrayOf(SpringModulithKotlinApplication::class),
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -238,7 +240,7 @@ class TodoIntegrationTest : IntegrationBaseTest() {
     fun `given existent note when delete note by id then note is deleted with empty response`() {
         // given
         val existentNote = todoRepository.save<TodoEntity>(TodoEntity(null, "note", true))
-        val id = existentNote.id
+        val id = requireNotNull(existentNote.id)
 
         // when
         val actual: ResponseEntity<ResponseDTO<Todo>> =
