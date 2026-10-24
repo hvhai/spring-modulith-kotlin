@@ -14,7 +14,7 @@ services:
       - spring-modulith-kotlin-network
 
   loki:
-    image: grafana/loki:3.7.7
+    image: grafana/loki:3.7.9
     platform: linux/amd64
     command: [ "-config.file=/etc/loki/local-config.yaml" ]
     ports:
