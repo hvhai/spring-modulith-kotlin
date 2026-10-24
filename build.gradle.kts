@@ -1,9 +1,9 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
-	id("org.springframework.boot") version "3.4.1"
+	kotlin("jvm") version "2.3.21"
+	kotlin("plugin.spring") version "2.3.21"
+	id("org.springframework.boot") version "4.1.2"
 	id("io.spring.dependency-management") version "1.1.7"
-	kotlin("plugin.jpa") version "1.9.25"
+	kotlin("plugin.jpa") version "2.3.21"
 }
 
 group = "com.codehunter"
@@ -19,9 +19,7 @@ repositories {
 	mavenCentral()
 }
 
-extra["springModulithVersion"] = "1.3.1"
-// Boot 3.4.1 manages Testcontainers 1.20.4, whose docker-java sends API v1.32 and is rejected by Docker Engine 29 (min API 1.44)
-extra["testcontainers.version"] = "1.21.4"
+extra["springModulithVersion"] = "2.1.1"
 
 dependencies {
 	// web
@@ -95,7 +93,7 @@ dependencyManagement {
 
 kotlin {
 	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
+		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
 	}
 }
 

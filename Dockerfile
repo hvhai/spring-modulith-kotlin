@@ -1,4 +1,4 @@
-FROM gradle:8.11-jdk21-alpine AS build
+FROM gradle:9.8-jdk21-alpine AS build
 WORKDIR /code
 
 # Continuous-profiling agent, fetched before the source copy so it stays cached
@@ -23,7 +23,7 @@ RUN gradle clean build --no-daemon -x test
 #
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
 #
-# NOTE: the build stage above is gradle:8.11-jdk21-alpine (musl libc) while this runtime stage
+# NOTE: the build stage above is gradle:9.8-jdk21-alpine (musl libc) while this runtime stage
 # is eclipse-temurin (glibc). This libc mismatch is intentional and correct: only JARs cross the
 # stage boundary (COPY --from=build below), and a JAR is libc- and architecture-neutral bytecode.
 # The Pyroscope agent jar does carry native async-profiler libraries, but it selects and extracts
