@@ -20,6 +20,8 @@ repositories {
 }
 
 extra["springModulithVersion"] = "1.3.1"
+// Boot 3.4.1 manages Testcontainers 1.20.4, whose docker-java sends API v1.32 and is rejected by Docker Engine 29 (min API 1.44)
+extra["testcontainers.version"] = "1.21.4"
 
 dependencies {
 	// web
