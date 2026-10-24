@@ -127,7 +127,9 @@ class DirectlyConfiguredJwkSetUri {
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/v3/**",
-                        "/api/**"
+                        "/api/**",
+                        // Error dispatch of a 401/404 must not be turned into an OAuth2 login redirect
+                        "/error"
                     )
                     .permitAll()
                     .anyRequest().authenticated()
