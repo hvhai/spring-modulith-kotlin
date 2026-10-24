@@ -4,6 +4,7 @@
 
 - Java 21 for direct JVM execution, or Docker for container deployment.
 - Auth0/OIDC application credentials for authenticated flows.
+- `FRUIT_ORDERING_USER` and `FRUIT_ORDERING_PASSWORD` environment variables for the Fruit Ordering UI (HTTP Basic). There is no default: the app fails to start without them outside the `local` profile.
 - H2 for the default in-memory setup, or MySQL for a persistent deployment.
 - The Grafana LGTM observability stack (Prometheus, Tempo, Loki, Pyroscope, Grafana) is optional for running the app, but required for metrics, traces, logs, and profiling.
 
@@ -123,3 +124,5 @@ Grafana runs with anonymous Admin access and no login form; Loki has authenticat
 Do not commit credentials to source control or embed them in Docker image layers.
 
 The `Dockerfile` declares `ARG`/`ENV` pairs for `CLIENT_SECRET` and `APP_METHOD_API_TOKEN`. Values passed via `--build-arg` become `ENV` layers readable with `docker history`. Neither the CI workflow nor Compose passes build args today, so nothing is currently baked in, but supply these at runtime (`docker run -e` / Compose `environment`) rather than at build time. Removing the build-time `ARG`/`ENV` indirection is a pending follow-up.
+
+The Fruit Ordering UI (`/fruit-ordering/**`) uses HTTP Basic, which sends credentials in every request without encryption. Serve it only over HTTPS in any non-local deployment.

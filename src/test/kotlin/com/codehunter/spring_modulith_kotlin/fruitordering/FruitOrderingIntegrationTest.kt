@@ -8,12 +8,15 @@ import com.codehunter.spring_modulith_kotlin.WiremockInitializer
 import com.codehunter.spring_modulith_kotlin.eventsourcing.PaymentEvent
 import com.codehunter.spring_modulith_kotlin.fruitordering_order.CreateOrderRequestDTO
 import com.codehunter.spring_modulith_kotlin.fruitordering_order.OrderController
+import com.codehunter.spring_modulith_kotlin.fruitordering_order.OrderService
 import com.codehunter.spring_modulith_kotlin.fruitordering_order.internal.JpaOrder
 import com.codehunter.spring_modulith_kotlin.fruitordering_order.internal.OrderRepository
 import com.codehunter.spring_modulith_kotlin.fruitordering_payment.internal.PaymentRepository
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.JpaWarehouseProduct
 import com.codehunter.spring_modulith_kotlin.fruitordering_warehouse.internal.WarehouseProductRepository
+import com.codehunter.spring_modulith_kotlin.share.OrderStatus
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,6 +28,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.Duration
 
 @Testcontainers
 @EnableScenarios
@@ -52,6 +56,9 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
 
     @Autowired
     lateinit var paymentRepository: PaymentRepository
+
+    @Autowired
+    lateinit var orderService: OrderService
 
     @Test
     @WithJwt(
@@ -105,6 +112,13 @@ class FruitOrderingIntegrationTest : IntegrationBaseTest() {
                 val payments = paymentRepository.findByOrderId(orderId)
                 assertThat(payments).hasSize(1)
                 assertThat(payments.first().purchaseAt).isNull()
+
+                // Order module consumes PaymentEvent.CREATED asynchronously; wait for the status change,
+                // then the order exposes the payment id the Fruit Ordering UI purchases with
+                await().atMost(Duration.ofSeconds(10)).until {
+                    orderService.getOrder(orderId).orderStatus == OrderStatus.WAITING_FOR_PURCHASE
+                }
+                assertThat(orderService.getOrder(orderId).payment?.id).isEqualTo(payments.first().id)
             })
 
     }

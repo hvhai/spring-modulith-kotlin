@@ -114,7 +114,7 @@ class DirectlyConfiguredJwkSetUri {
 
     @Bean
     @Throws(java.lang.Exception::class)
-    @Order(1)
+    @Order(2)
     fun filterChainMvc(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests({
@@ -127,7 +127,9 @@ class DirectlyConfiguredJwkSetUri {
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/v3/**",
-                        "/api/**"
+                        "/api/**",
+                        // Error dispatch of a 401/404 must not be turned into an OAuth2 login redirect
+                        "/error"
                     )
                     .permitAll()
                     .anyRequest().authenticated()

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<div id="page" layout:fragment="content">
+    <div class="container mt-5">
+        <a th:href="@{/fruit-ordering}">&larr; Back to Fruit Ordering</a>
+
+        <div class="alert alert-danger mt-3" role="alert" th:if="${error}" th:text="${error}"></div>
+
+        <h2 class="mt-3">Order <small class="text-muted" th:text="${order.id}">id</small></h2>
+        <p>
+            Status: <span th:replace="~{fragments/order-status-badge :: statusBadge(${order.orderStatus})}"></span>
+            <span class="text-muted ml-2" th:if="${autoRefresh}">Processing&hellip;</span>
+        </p>
+
+        <div class="alert alert-danger" role="alert" th:if="${order.orderStatus.name() == 'CANCELED'}">
+            Order canceled (out of stock).
+        </div>
+
+        <h4 class="mt-4">Products</h4>
+        <ul>
+            <li th:each="product : ${order.products}">
+                <span th:text="${product.name}">Apple</span> &mdash; <span th:text="${product.price}">1.00</span>
+            </li>
+        </ul>
+        <p>Total: <b th:text="${order.totalAmount} ?: '-'">-</b></p>
+
+        <div th:if="${order.payment != null}">
+            <h4 class="mt-4">Payment</h4>
+            <p>
+                Id: <span th:text="${order.payment.id}">payment</span><br/>
+                Amount: <span th:text="${order.payment.totalAmount} ?: '-'">-</span>
+            </p>
+        </div>
+
+        <form id="purchaseForm" method="post"
+              th:if="${order.orderStatus.name() == 'WAITING_FOR_PURCHASE' and order.payment != null and not purchasing}"
+              th:action="@{/fruit-ordering/orders/{id}/purchase(id=${order.id})}">
+            <button type="submit" class="btn btn-success">Purchase</button>
+        </form>
+    </div>
+
+    <!-- Reload while the async order flow is still moving -->
+    <script id="autoRefresh" th:if="${autoRefresh}">setTimeout(() => location.reload(), 2000)</script>
+</div>
+
+</html>

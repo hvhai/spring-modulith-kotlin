@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+
+<div id="page" layout:fragment="content">
+    <div class="container mt-5">
+        <h2>Fruit Ordering</h2>
+
+        <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
+
+        <h4 class="mt-4">Products</h4>
+        <form method="post" th:action="@{/fruit-ordering/orders}">
+            <table class="table table-sm">
+                <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Stock</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${products}">
+                    <td>
+                        <input type="checkbox" name="productIds"
+                               th:id="${'product-' + product.id}"
+                               th:value="${product.id}"
+                               th:disabled="${product.quantity <= 0}"/>
+                    </td>
+                    <td><label th:for="${'product-' + product.id}" th:text="${product.name}">Apple</label></td>
+                    <td th:text="${product.price}">1.00</td>
+                    <td th:text="${product.quantity}">10</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(products)}">
+                    <td colspan="4" class="text-muted">No products available</td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">Place order</button>
+        </form>
+
+        <h4 class="mt-5">Orders</h4>
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Status</th>
+                <th scope="col">Total</th>
+                <th scope="col">Products</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td>
+                    <a th:href="@{/fruit-ordering/orders/{id}(id=${order.id})}"
+                       th:text="${#strings.length(order.id) > 8} ? ${#strings.substring(order.id, 0, 8)} : ${order.id}">order</a>
+                </td>
+                <td>
+                    <span th:replace="~{fragments/order-status-badge :: statusBadge(${order.orderStatus})}"></span>
+                </td>
+                <td th:text="${order.totalAmount} ?: '-'">-</td>
+                <td th:text="${#sets.size(order.products)}">0</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(orders)}">
+                <td colspan="4" class="text-muted">No orders yet</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</html>
