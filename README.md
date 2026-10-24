@@ -4,13 +4,13 @@ Spring Boot application written in Kotlin and organized with Spring Modulith. Th
 
 ## Stack
 
-- Java 21, Kotlin 1.9.25
-- Spring Boot 3.4.1
-- Spring Modulith 1.3.1
+- Java 21, Kotlin 2.3.21
+- Spring Boot 4.1.2
+- Spring Modulith 2.1.1
 - Spring MVC, Thymeleaf, Spring Security OAuth2/Auth0
 - Spring Data JPA, Flyway, H2 and MySQL
 - OpenAPI/Swagger UI, Actuator, and Grafana LGTM observability (Prometheus, Tempo, Loki, Pyroscope)
-- Gradle 8.11.1 (wrapper)
+- Gradle 9.8.2 (wrapper)
 
 ## Prerequisites
 

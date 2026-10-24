@@ -40,7 +40,7 @@ The image exposes port 8080 and starts the packaged Spring Boot JAR. The Dockerf
 
 The runtime stage uses `eclipse-temurin:21.0.12_8-jre-noble`. A JRE is sufficient — the app runs a Spring Boot fat jar and needs no compiler at runtime; the `jdk.jfr` module used by the request tracing interceptor is present in Temurin JRE images. The previous `openjdk:21-jdk-slim` base was removed from Docker Hub and no longer receives security updates.
 
-The build stage (`gradle:8.11-jdk21-alpine`, musl) and the runtime stage (glibc) intentionally use different C libraries. Only the compiled JAR crosses between stages, and bytecode is libc-neutral, so the two do not need to match.
+The build stage (`gradle:9.8-jdk21-alpine`, musl) and the runtime stage (glibc) intentionally use different C libraries. Only the compiled JAR crosses between stages, and bytecode is libc-neutral, so the two do not need to match.
 
 ## Configuration
 
