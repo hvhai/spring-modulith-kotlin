@@ -13,10 +13,10 @@ class AuthenticationUtil private constructor() {
         val user: UserDTO
             get() {
                 val auth = SecurityContextHolder.getContext().authentication
-                val principal = auth.principal as Jwt
+                val principal = auth?.principal as Jwt
                 val userId = principal.getClaimAsString("sub")
                 val username = principal.getClaimAsString("preferred_username")
-                return UserDTO(userId, username)
+                return UserDTO(requireNotNull(userId), requireNotNull(username))
             }
     }
 }

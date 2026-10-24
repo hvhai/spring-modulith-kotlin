@@ -24,7 +24,7 @@ class InitData(
     private val productRepository: WarehouseProductRepository,
     private val publisher: ApplicationEventPublisher,
     private val eventSourcingService: EventSourcingService,
-) : ApplicationListener<ContextRefreshedEvent?> {
+) : ApplicationListener<ContextRefreshedEvent> {
     val log = LoggerFactory.getLogger(this::class.java)
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {

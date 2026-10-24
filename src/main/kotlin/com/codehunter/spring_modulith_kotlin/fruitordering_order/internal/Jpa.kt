@@ -90,7 +90,7 @@ class JpaOrder(
         inverseJoinColumns = [JoinColumn(name = "product_id")]
     )
     var products: MutableSet<JpaOrderProduct> = mutableSetOf()
-) : AbstractAggregateRoot<JpaOrder?>() {
+) : AbstractAggregateRoot<JpaOrder>() {
 
     companion object {
         val log = LoggerFactory.getLogger(this::class.java)

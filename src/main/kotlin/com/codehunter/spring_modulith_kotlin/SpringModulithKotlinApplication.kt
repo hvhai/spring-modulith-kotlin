@@ -143,7 +143,7 @@ class DirectlyConfiguredJwkSetUri {
     }
 
     private fun logoutHandler(): LogoutHandler {
-        return LogoutHandler { _: HttpServletRequest, response: HttpServletResponse, _: Authentication ->
+        return LogoutHandler { _: HttpServletRequest, response: HttpServletResponse, _: Authentication? ->
             try {
                 val baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
                 response.sendRedirect(issuer + "v2/logout?client_id=" + clientId + "&returnTo=" + baseUrl)

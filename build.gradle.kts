@@ -23,8 +23,8 @@ extra["springModulithVersion"] = "2.1.1"
 
 dependencies {
 	// web
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	implementation("tools.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
 	// UI
@@ -33,8 +33,8 @@ dependencies {
 	implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
 
 	// security
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+	implementation("org.springframework.boot:spring-boot-starter-security-oauth2-client")
+	implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 
 	// modulith
@@ -45,8 +45,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("com.mysql:mysql-connector-j")
 	runtimeOnly("com.h2database:h2")
-	implementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.10.0")
-	implementation("org.flywaydb:flyway-core")
+	implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:2.3.0")
+	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("org.flywaydb:flyway-mysql")
 
 	// monitoring
@@ -58,7 +58,7 @@ dependencies {
 	implementation("com.github.loki4j:loki-logback-appender:2.1.0")
 
 	// swagger
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
 
 	// markdown
 	implementation("org.commonmark:commonmark:0.24.0")

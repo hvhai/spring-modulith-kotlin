@@ -1,6 +1,6 @@
 package com.codehunter.spring_modulith_kotlin
 
-import com.fasterxml.jackson.core.type.TypeReference
+import tools.jackson.core.type.TypeReference
 import org.springframework.core.ParameterizedTypeReference
 import java.lang.reflect.Type
 
