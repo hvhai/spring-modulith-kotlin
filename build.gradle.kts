@@ -3,6 +3,8 @@ plugins {
 	kotlin("plugin.spring") version "2.3.21"
 	id("org.springframework.boot") version "4.1.2"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("org.hibernate.orm") version "7.4.10.Final"
+	id("org.graalvm.buildtools.native") version "1.1.14"
 	kotlin("plugin.jpa") version "2.3.21"
 }
 
@@ -101,6 +103,11 @@ dependencyManagement {
 kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+	}
+}
+
+hibernate {
+	enhancement {
 	}
 }
 
