@@ -13,7 +13,7 @@ version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
@@ -115,6 +115,26 @@ allOpen {
 	annotation("jakarta.persistence.Entity")
 	annotation("jakarta.persistence.MappedSuperclass")
 	annotation("jakarta.persistence.Embeddable")
+}
+
+// thymeleaf-layout-dialect ships a native-image.properties that initializes all of Groovy at image
+// build time. Groovy 5 cannot be built that way (its call-site cache starts a thread, and its MetaClass
+// setup leaks JDK java.beans state into the image heap), so drop only that file and keep the jar's
+// reflection metadata; Groovy then initializes at run time, which is GraalVM's default.
+val nativeImageBuildArgs = listOf(
+	"--exclude-config",
+	".*thymeleaf-layout-dialect.*.jar",
+	"META-INF/native-image/.*/native-image.properties",
+)
+
+graalvmNative {
+	binaries.named("main") {
+		buildArgs.addAll(nativeImageBuildArgs)
+	}
+}
+
+tasks.bootBuildImage {
+	environment.put("BP_NATIVE_IMAGE_BUILD_ARGUMENTS", nativeImageBuildArgs.joinToString(" "))
 }
 
 tasks.withType<Test> {
