@@ -82,7 +82,7 @@ services:
       - spring-modulith-kotlin-network
 
   grafana:
-    image: grafana/grafana:13.2.1
+    image: grafana/grafana:13.3.0
     platform: linux/amd64
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
