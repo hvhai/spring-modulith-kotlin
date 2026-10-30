@@ -49,7 +49,7 @@ services:
       - spring-modulith-kotlin-network
 
   pyroscope:
-    image: grafana/pyroscope:2.3.1
+    image: grafana/pyroscope:2.4.2
     platform: linux/amd64
     ports:
       - "4040:4040"
