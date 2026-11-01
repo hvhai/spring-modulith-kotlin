@@ -166,3 +166,19 @@ tasks.withType<Test> {
 	}))
 
 }
+
+tasks.register<JavaExec>("runWithAgent") {
+	group = "application"
+	description = "Chạy ứng dụng Spring Boot Kotlin kèm GraalVM Tracing Agent"
+
+	// Đảm bảo chạy tác vụ AOT trước khi kích hoạt
+	dependsOn(tasks.named("bootJar"))
+
+	mainClass.set("com.codehunter.spring_modulith_kotlin.SpringModulithKotlinApplication") // Thay bằng Class chứa hàm main của bạn
+	classpath = sourceSets["main"].runtimeClasspath
+
+	systemProperty("spring.aot.enabled", "true")
+
+	// Cấu hình đường dẫn xuất file metadata
+	jvmArgs("-agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image/")
+}
